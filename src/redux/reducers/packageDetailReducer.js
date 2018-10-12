@@ -1,15 +1,15 @@
 let packageDetails = {
     "qrCode": "",
-    "productType": "",
+    "productName": "",
     "quantity": 0,
     "descr": "N/A"
 }
 
 const packageDetailReducer = (state = packageDetails, action) => {
     switch (action.type) {
-        case 'SET_PRODUCT_TYPE':
+        case 'SET_PRODUCT_NAME':
             return {
-                ...state, productType: action.payload
+                ...state, productName: action.payload
             }
         case 'SET_QUANTITY':
             return {
@@ -18,6 +18,10 @@ const packageDetailReducer = (state = packageDetails, action) => {
         case 'SET_DESCRIPTION':
             return {
                 ...state, descr: action.payload
+            }
+        case 'SET_QRCODE':
+            return {
+                ...state, qrCode: action.payload
             }
         default:
             return state;

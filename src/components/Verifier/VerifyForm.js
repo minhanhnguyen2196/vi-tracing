@@ -41,7 +41,7 @@ class VerifyForm extends Component {
     }
 
     shipmentVerified = () => {
-        const { shipment } = this.props;
+        const { shipment, userInfo } = this.props;
         if (this.state.note == '' || this.state.expiredDate == '') {
             Alert.alert(
                 'Warning',
@@ -57,7 +57,7 @@ class VerifyForm extends Component {
                 "note": shipment.notes + "_" + this.state.note,
                 "expiredDateTime": this.state.expiredDate,
                 "shipment": "resource:com.vsii.blockchain.vitracing.Shipment#" + shipment.qrCode,
-                "verifier": "resource:com.vsii.blockchain.vitracing.Verifier#" + shipment.verifier.personId
+                "verifier": "resource:com.vsii.blockchain.vitracing.Verifier#" + userInfo.id
             }
             this.setState({ visible: true }, () => {
                 return fetch(URI + '/ShipmentVerified', {
@@ -117,6 +117,7 @@ class VerifyForm extends Component {
 
     render() {
         const { submitted, status } = this.state;
+        const { userInfo, shipment } = this.props;
         return (
             <Container>
                 <View style={styles.header}>
@@ -145,7 +146,7 @@ class VerifyForm extends Component {
                             <Text style={styles.label}>Verifier ID</Text>
                             <TextInput
                                 style={styles.input}
-                                value='#V21122'
+                                value={userInfo.id}
                                 editable={false}
                             />
                         </View>
@@ -258,7 +259,8 @@ class VerifyForm extends Component {
 
 function mapStateToProps(state) {
     return {
-        shipment: state.shipment
+        shipment: state.shipment,
+        userInfo: state.userInfo
     };
 }
 

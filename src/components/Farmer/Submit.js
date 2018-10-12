@@ -27,14 +27,14 @@ class Submit extends Component {
     }
 
     shipmentPacked = () => {
-        const { packageDetail, shipment } = this.props;
+        const { packageDetail, userInfo } = this.props;
         let packedShipment = {
             "$class": "com.vsii.blockchain.vitracing.ShipmentPacked",
-            "productName": packageDetail.productType,
+            "productName": packageDetail.productName,
             "note": packageDetail.descr,
             "quantity": packageDetail.quantity,
-            "qrCode":  shipment.qrCode,
-            "farmerId": "resource:com.vsii.blockchain.vitracing.Farmer#" + shipment.farmer.personId
+            "qrCode":  packageDetail.qrCode,
+            "farmerId": userInfo.id
         }
         this.setState({ visible: true }, () => {
             return fetch(URI + '/ShipmentPacked', {
@@ -94,7 +94,7 @@ class Submit extends Component {
                                 <Left>
                                     <Body>
                                         <Text>Package ID</Text>
-                                        <Text note>#{shipment.qrCode}</Text>
+                                        <Text note>#{packageDetail.qrCode}</Text>
                                     </Body>
                                 </Left>
                             </CardItem>
@@ -108,7 +108,7 @@ class Submit extends Component {
                                     Product Name
                                 </Text>
                                 <Right style={{ flex: 2 }}>
-                                    <Text>{packageDetail.productType}</Text>
+                                    <Text>{packageDetail.productName}</Text>
                                 </Right>
                             </CardItem>
                             <CardItem>
@@ -140,17 +140,10 @@ class Submit extends Component {
                             (this.state.submitted) ?
                                 <View>
                                     <Button
-                                        onPress={() => this.props.navigation.navigate('Scan')}
+                                        onPress={() => this.props.navigation.navigate('Home')}
                                         block style={{ backgroundColor: '#27ae60', marginTop: 20 }} >
                                         <Text>
                                             NEW PACKAGE
-                                    </Text>
-                                    </Button>
-                                    <Button
-                                        onPress={() => this.props.navigation.navigate('Home')}
-                                        block style={{ backgroundColor: '#2980b9', marginTop: 20 }} >
-                                        <Text>
-                                            BACK TO HOME
                                     </Text>
                                     </Button>
                                 </View>
@@ -176,7 +169,7 @@ class Submit extends Component {
 function mapStateToProps(state) {
     return {
         packageDetail: state.packageDetail,
-        shipment: state.shipment
+        userInfo: state.userInfo
     };
 }
 

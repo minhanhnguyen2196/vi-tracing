@@ -18,7 +18,7 @@ class VerifyFormMarket extends Component {
     }
 
     shipmentReceived = () => {
-        const { shipment } = this.props;
+        const { shipment, userInfo } = this.props;
         if (this.state.note == '') {
             Alert.alert(
                 'Warning',
@@ -33,7 +33,7 @@ class VerifyFormMarket extends Component {
                 "$class": "com.vsii.blockchain.vitracing.ShipmentReceived",
                 "note": shipment.notes + "_" + this.state.note,
                 "shipment": "resource:com.vsii.blockchain.vitracing.Shipment#" + shipment.qrCode,
-                "retailer": "resource:com.vsii.blockchain.vitracing.Retailer#" + shipment.retailer.personId
+                "retailer": "resource:com.vsii.blockchain.vitracing.Retailer#" + userInfo.id
             }
             this.setState({ visible: true }, () => {
                 return fetch(URI + '/ShipmentReceived', {
@@ -55,7 +55,7 @@ class VerifyFormMarket extends Component {
     }
 
     shipmentRejected = () => {
-        const { shipment } = this.props;
+        const { shipment, userInfo } = this.props;
         if (this.state.note == '') {
             Alert.alert(
                 'Warning',
@@ -92,6 +92,7 @@ class VerifyFormMarket extends Component {
 
     render() {
         const { submitted, status } = this.state;
+        const { userInfo } = this.props;
         return (
             <Container>
                 <View style={styles.header}>
@@ -117,10 +118,10 @@ class VerifyFormMarket extends Component {
                     <KeyboardAvoidingView style={{ flex: 1 }}>
                         <Text style={{ paddingVertical: 10, fontSize: 24, color: '#27ae60', fontWeight: 'bold', alignSelf: 'center' }}>Package Verification</Text>
                         <View>
-                            <Text style={styles.label}>Market ID</Text>
+                            <Text style={styles.label}>Retailer ID</Text>
                             <TextInput
                                 style={styles.input}
-                                value='#M21122'
+                                value={userInfo.id}
                                 editable={false}
                             />
                         </View>
@@ -146,7 +147,7 @@ class VerifyFormMarket extends Component {
                         <Text style={styles.label}>Package Status</Text>
                         <ListItem>
                             <Left>
-                                <Text>Good</Text>
+                                <Text>Pass</Text>
                             </Left>
                             <Right>
                                 <Radio
@@ -159,7 +160,7 @@ class VerifyFormMarket extends Component {
                         </ListItem>
                         <ListItem>
                             <Left>
-                                <Text>Damaged</Text>
+                                <Text>Reject</Text>
                             </Left>
                             <Right>
                                 <Radio
@@ -197,7 +198,8 @@ class VerifyFormMarket extends Component {
 
 function mapStateToProps(state) {
     return {
-        shipment: state.shipment
+        shipment: state.shipment,
+        userInfo: state.userInfo
     };
 }
 

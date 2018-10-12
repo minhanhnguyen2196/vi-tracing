@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Alert, Image,  TouchableOpacity, TextInput, StyleSheet, KeyboardAvoidingView } from 'react-native';
 import { Container, Content, Form, Label, Input, Item, Button, Picker, Icon, Text } from 'native-base';
-import { setQuantity, setProductType, setDescription } from '../../redux/actionCreator';
+import { setQuantity, setProductName, setDescription } from '../../redux/actionCreator';
 import { connect } from 'react-redux';
 
 const logo  = require('../../assets/img/logo2.png')
@@ -65,7 +65,7 @@ class InputForm extends Component {
                                 onBlur={() => this.setState({ isFocused1: false })}
                                 onFocus={() => this.setState({ isFocused1: true })}
                                 style={this.state.isFocused1 ? styles.focusInput : styles.input}
-                                onChangeText={(text) => this.props.setProductType(text)}
+                                onChangeText={(text) => this.props.setProductName(text)}
                                 onSubmitEditing={() => this.quantity.focus()}
                                 ref={(input) => this.type = input}
                                 underlineColorAndroid='transparent'
@@ -116,7 +116,7 @@ function mapStateToProps(state) {
 
 export default connect(mapStateToProps, {
     setQuantity,
-    setProductType,
+    setProductName,
     setDescription
 })(InputForm);
 

@@ -39,7 +39,7 @@ class FormShipper extends Component {
     }
 
     shipmentShipped = () => {
-        const { shipment } = this.props;
+        const { shipment, userInfo } = this.props;
         if (this.state.note == '') {
             Alert.alert(
                 'Warning',
@@ -54,7 +54,7 @@ class FormShipper extends Component {
                 "$class": "com.vsii.blockchain.vitracing.ShipmentShipped",
                 "note": shipment.notes + "_" + this.state.note,
                 "shipment": "resource:com.vsii.blockchain.vitracing.Shipment#" + shipment.qrCode,
-                "shipper": "resource:com.vsii.blockchain.vitracing.Shipper#" + shipment.shipper.personId
+                "shipper": "resource:com.vsii.blockchain.vitracing.Shipper#" + userInfo.id
             }
             this.setState({ visible: true }, () => {
                 return fetch(URI + '/ShipmentShipped', {
@@ -78,6 +78,7 @@ class FormShipper extends Component {
 
     render() {
         const { submitted } = this.state;
+        const { userInfo } = this.props;
         return (
             <Container>
                 <View style={{ backgroundColor: '#27ae60', height: 50, alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
@@ -105,7 +106,7 @@ class FormShipper extends Component {
                             <Text style={{ color: '#2d3436', paddingVertical: 10, paddingLeft: 15, fontSize: 15 }}>Shipper ID</Text>
                             <TextInput
                                 style={styles.input}
-                                value='#S21122'
+                                value={userInfo.id}
                                 editable={false}
                             />
                         </View>
@@ -144,7 +145,8 @@ class FormShipper extends Component {
 
 function mapStateToProps(state) {
     return {
-        shipment: state.shipment
+        shipment: state.shipment,
+        userInfo: state.userInfo
     };
 }
 

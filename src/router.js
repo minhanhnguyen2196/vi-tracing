@@ -11,20 +11,23 @@ import InputForm from './components/Farmer/InputForm';
 import InputForm2 from './components/Farmer/InputForm2';
 import Submit from './components/Farmer/Submit';
 import Home from './components/Home';
-import ShipmentList from './components/Farmer/ShipmentList';
+import ShipmentListForFarmer from './components/Farmer/ShipmentListForFarmer';
 import ShipmentDetail from './components/Farmer/ShipmentDetail';
 import Profile from './components/Farmer/Profile';
 
 import VerifyScan from './components/Verifier/VerifyScan';
 import PackageDetailForVerifier from './components/Verifier/PackageDetailForVerifier';
 import VerifyForm from './components/Verifier/VerifyForm';
+import ShipmentListForVerifier from './components/Verifier/ShipmentListForVerifier';
 
 import MarketScan from './components/Market/MarketScan';
 import PackageDetailForMarket from './components/Market/PackageDetailForMarket';
 import VerifyFormMarket from './components/Market/VerifyFormMarket';
+import ShipmentListForRetailer from './components/Market/ShipmentListForRetailer';
 
 import FormShipper from './components/Shipper/FormShipper';
 import ScanShipper from './components/Shipper/ScanShipper';
+import ShipmentListForShipper from './components/Shipper/ShipmentListForShipper';
 
 import First from './components/First';
 import LoadingScreen from './components/LoadingScreen';
@@ -41,7 +44,7 @@ export const AppStack = createStackNavigator({
     ScanResult,
     InputForm,
     Submit,
-    ShipmentList,
+    ShipmentListForFarmer,
     ShipmentDetail,
     VerifyScan,
     PackageDetailForVerifier,
@@ -50,7 +53,10 @@ export const AppStack = createStackNavigator({
     PackageDetailForMarket,
     VerifyFormMarket,
     FormShipper,
-    ScanShipper
+    ScanShipper,
+    ShipmentListForVerifier,
+    ShipmentListForShipper,
+    ShipmentListForRetailer
 }, {
         initialRouteName: 'LoadingScreen',
         navigationOptions: { 

@@ -12,28 +12,58 @@ class Home extends Component {
     }
 
     onScanButtonPress = () => {
-        const { role } = this.props;
-        if (role.farmer) {
-            this.props.navigation.navigate('Scan');
-        } else if (role.verifier) {
-            this.props.navigation.navigate('VerifyScan');
-        } else if (role.market) {
-            this.props.navigation.navigate('MarketScan');
-        } else if (role.shipper) {
-            this.props.navigation.navigate('ScanShipper')
+        const { userInfo } = this.props;
+        switch (userInfo.position) {
+            case "Farmer":
+                this.props.navigation.navigate('Scan')
+                break;
+            case "Verifier":
+                this.props.navigation.navigate('VerifyScan')
+                break;
+            case "Shipper":
+                this.props.navigation.navigate('ScanShipper')
+                break;
+            case "Retailer":
+                this.props.navigation.navigate('MarketScan')
+                break;
+            default:
+                break;
+        }
+    }
+
+    onListButtonPress = () => {
+        const { userInfo } = this.props;
+        switch (userInfo.position) {
+            case "Farmer":
+                this.props.navigation.navigate('ShipmentListForFarmer')
+                break;
+            case "Verifier":
+                this.props.navigation.navigate('ShipmentListForVerifier')
+                break;
+            case "Shipper":
+                this.props.navigation.navigate('ShipmentListForShipper')
+                break;
+            case "Retailer":
+                this.props.navigation.navigate('ShipmentListForRetailer')
+                break;
+            default:
+                break;
         }
     }
 
     renderName = () => {
-        const { role } = this.props;
-        if (role.farmer) {
-            return 'Farmer'
-        } else if (role.verifier) {
-            return 'Verifier'
-        } else if (role.market) {
-            return 'Market'
-        } else if (role.shipper) {
-            return 'Shipper'
+        const { userInfo } = this.props;
+        switch (userInfo.position) {
+            case "Farmer":
+                return 'Farmer'
+            case "Verifier":
+                return 'Verifier'
+            case "Shipper":
+                return 'Shipper'
+            case "Retailer":
+                return 'Retailer'
+            default:
+                break;
         }
     }
 
@@ -69,7 +99,7 @@ class Home extends Component {
                             </View>
                             <View style={{ flex: 1, marginRight: 20, paddingBottom: 20 }}>
                                 <TouchableOpacity
-                                    onPress={() => this.props.navigation.navigate('ShipmentList')}
+                                    onPress={() => this.onListButtonPress()}
                                     style={{ paddingLeft: 20, paddingBottom: 20, justifyContent: 'center', alignItems: 'center', borderBottomColor: '#dfe6e9', borderBottomWidth: 0.5 }}>
                                     <Icon name='history' type='FontAwesome' style={{ paddingBottom: 5, fontSize: 60, color: '#27ae60' }} />
                                     <Text style={{ fontSize: 16, color: '#1e272e', fontWeight: '500' }}>Shipment Lists</Text>
@@ -81,7 +111,6 @@ class Home extends Component {
                             </View>
                         </View>
                     </View>
-
                 </Content>
             </Container>
         );
@@ -91,7 +120,7 @@ class Home extends Component {
 
 function mapStateToProps(state) {
     return {
-        role: state.role
+        userInfo: state.userInfo
     };
 }
 

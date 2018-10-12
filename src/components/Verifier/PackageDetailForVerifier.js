@@ -27,7 +27,7 @@ class PackageDetailForVerifier extends Component {
                 <Content padder>
                     <Button
                         transparent
-                        onPress={() => this.props.navigation.goBack()}
+                        onPress={() => this.props.navigation.navigate('Home')}
                     >
                         <Icon name='arrow-back' style={{ fontSize: 32, color: '#27ae60' }} />
                     </Button>
@@ -42,11 +42,11 @@ class PackageDetailForVerifier extends Component {
 
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Icon name='home' type='FontAwesome' />
-                            <Text style={{ padding: 5, fontSize: 15 }}>{shipment.farmer.orgFarmer.name}</Text>
+                            <Text style={{ padding: 5, fontSize: 15 }}>{shipment.farmer.org.name}</Text>
                         </View>
                     </View>
                     <View style={{ flexDirection: 'row', paddingTop: 30 }}>
-                        <View style={{ flex: 1, borderRightWidth: 1, borderColor: '#dfe6e9', marginLeft: 20 }}>
+                        <View style={{ flex: 1, borderRightWidth: 1, borderColor: '#dfe6e9', marginLeft: 10 }}>
                             <View style={{ paddingBottom: 20, borderBottomColor: '#dfe6e9', borderBottomWidth: 0.5 }}>
                                 <Text style={{ fontSize: 14, color: '#555D65', paddingBottom: 5, }}>Package ID</Text>
                                 <Text style={{ fontSize: 16, color: '#1e272e', fontWeight: '500' }}>#{shipment.qrCode}</Text>

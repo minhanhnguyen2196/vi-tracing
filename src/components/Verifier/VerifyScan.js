@@ -20,26 +20,32 @@ class VerifyScan extends Component {
 
     onBarCodeRead = (e) => {
         this.setState({ qrcode: e.data });
-        if (e.data == '12345678') {
-            Vibration.vibrate();
-            this.setState({ scanning: false });
-            const url = URI + '/Shipment';
-            const data = { filter: '{"include":"resolve"}' };
-            const params = Object.keys(data).map(key => key + '=' +
-                encodeURIComponent(data[key])).join('&');
-            const fullUrl = url + `${params ? '?' + params : ''}`;
+        Vibration.vibrate();
+        this.setState({ scanning: false });
 
-            return fetch(fullUrl, {
-                method: 'GET'
-            })
-                .then(res => res.json())
-                .then(resJson => {
-                    this.setState({ visible: false });
-                    this.props.getShipment(resJson[0]);
+        const url = URI + '/Shipment/' + e.data;
+        const data = { filter: '{"include":"resolve"}' };
+        const params = Object.keys(data).map(key => key + '=' +
+            encodeURIComponent(data[key])).join('&');
+        const fullUrl = url + `${params ? '?' + params : ''}`;
+
+        fetch(fullUrl, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+            .then(res => res.json())
+            .then(resJson => {
+                if (resJson.error) {
+                    this.props.navigation.navigate('ScanResult', { result: 'denied' });
+                    return Promise.reject(new Error('Fail!'));
+                } else {
+                    this.props.getShipment(resJson);
                     this.props.navigation.navigate('PackageDetailForVerifier');
-                })
-                .catch(err => console.log(err))
-        }
+                }
+            })
+            .catch(err => console.log(err))
     }
 
 
@@ -74,7 +80,6 @@ class VerifyScan extends Component {
                             permissionDialogTitle={'Permission to use camera'}
                             permissionDialogMessage={'We need your permission to use your camera phone'}
                             onBarCodeRead={this.onBarCodeRead}
-
                         >
                             <View style={styles.rectangle}>
                                 <View style={styles.rectangleColor} />
@@ -88,7 +93,6 @@ class VerifyScan extends Component {
                             </View>
                         </RNCamera>
                     }
-
                 </View>
             </View>
         );

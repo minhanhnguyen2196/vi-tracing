@@ -3,6 +3,7 @@ import { View, Alert, KeyboardAvoidingView, TouchableOpacity, Animated, TextInpu
 import { Container, Input, Item, Label, Text, Button, Icon, Form, Content, Picker, Left, Header } from 'native-base';
 import * as Animatable from 'react-native-animatable';
 import { connect } from 'react-redux';
+import Spinner from 'react-native-loading-spinner-overlay';
 import { getUserInfo } from '../../redux/actionCreator';
 var md5 = require('md5');
 
@@ -12,7 +13,8 @@ class Login extends Component {
         super(props);
         this.state = {
             username: '',
-            password: ''
+            password: '',
+            visible: false
         };
     }
 
@@ -34,48 +36,54 @@ class Login extends Component {
     }
 
     logIn = () => {
+        const { username, password } = this.state;
         let userAccount = {
-            username: this.state.username,
-            password: md5(this.state.password)
+            username,
+            password: md5(password)
         }
-        fetch('http://192.168.0.87:7777/api/userlogin/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(userAccount)
-        })
-            .then((res) => {
-                console.log(res.status);
-                if (res.status == 404) {
-                    console.log('Failed')
-                    Alert.alert(
-                        'Login Failed',
-                        'Incorrect Username or Password',
-                        [
-                            { text: 'Try Again' },
-                        ],
-                        { cancelable: true }
-                    )
-                } else {
-                    return res.json();
-                }
-
+        if (username === '' || password === '') {
+            alert('Undefined username or password')
+        } else {
+            this.setState({ visible: true }, () => {
+                fetch('http://192.168.0.87:7777/api/userlogin/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(userAccount)
+                })
+                    .then((res) => {
+                        console.log(res.status);
+                        if (res.status == 404) {
+                            Alert.alert(
+                                'Login Failed',
+                                'Incorrect Username or Password',
+                                [
+                                    { text: 'Try Again', onPress: () => this.setState({ visible: false}) },
+                                ],
+                                { cancelable: true }
+                            );
+                            return Promise.reject(new Error());
+                        } else {
+                            return res.json();
+                        }
+                    })
+                    .then(resJson => {
+                        this.props.getUserInfo(resJson);
+                        this.setState({ visible: false }, () => {
+                            Alert.alert(
+                                'Login Successfull',
+                                'Your credentials are OK',
+                                [
+                                    { text: 'OK', onPress: () => this.props.navigation.navigate('Home') },
+                                ],
+                                { cancelable: false }
+                            )
+                        });
+                    })
+                    .catch(err => console.log(err))
             })
-            .then(resJson => {
-                console.log(resJson);
-                this.props.getUserInfo(resJson)
-                Alert.alert(
-                    'Login Successfull',
-                    'Your credentials are OK',
-                    [
-                        { text: 'OK', onPress: () => this.props.navigation.navigate('Home') },
-                    ],
-                    { cancelable: false }
-                )
-            }
-            )
-            .catch(err => console.log(err))
+        }
     }
 
 
@@ -94,6 +102,11 @@ class Login extends Component {
                     </TouchableOpacity>
                 </Animated.View>
                 <Content padder contentContainerStyle={{ justifyContent: 'center', flex: 1 }}>
+                    <Spinner
+                        color='#27ae60'
+                        visible={this.state.visible}
+                        animation='fade'
+                    />
                     <Animatable.Text
                         animation='fadeInDown'
                         style={{

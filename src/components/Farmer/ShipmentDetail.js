@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Container, Content, Button, Icon, Text } from 'native-base';
 import Timeline from 'react-native-timeline-listview';
 
@@ -10,11 +10,11 @@ class ShipmentDetail extends Component {
 
         };
         this.data = [
-            { time: '09:00', title: 'Packed', description: 'Event 1 Description' },
-            { time: '10:45', title: 'Event 2', description: 'Event 2 Description' },
-            { time: '12:00', title: 'Event 3', description: 'Event 3 Description' },
-            { time: '14:00', title: 'Event 4', description: 'Event 4 Description' },
-            { time: '16:30', title: 'Event 5', description: 'Event 5 Description' }
+            { time: 'Oct 18', title: 'Packed', description: 'Good Apple' },
+            { time: 'Jul 27', title: 'Verified', description: 'Qualified product' },
+            { time: 'Feb 2', title: 'Shipped', description: 'Shipped from Hanoi' },
+            { time: 'Jul 23', title: 'Received', description: 'Good' },
+
         ]
     }
     render() {
@@ -35,20 +35,48 @@ class ShipmentDetail extends Component {
                 </View>
                 <Content padder >
                     <View style={{ flex: 1, padding: 5 }}>
+                        <View style={{ flexDirection: 'row', padding: 10 }}>
+                            <TouchableOpacity style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                                <Icon name='home' type='FontAwesome' style={{ fontSize: 30, color: '#27ae60' }} />
+                                <Text style={{ padding: 5, textDecorationLine: 'underline' }}>Farmer</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                                <Icon name='users' type='FontAwesome' style={{ fontSize: 30, color: '#27ae60' }} />
+                                <Text style={{ padding: 5, textDecorationLine: 'underline' }} >Verifier</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                                <Icon name='truck' type='FontAwesome' style={{ fontSize: 30, color: '#27ae60' }} />
+                                <Text style={{ padding: 5, textDecorationLine: 'underline' }}>Shipper</Text>
+                            </TouchableOpacity>
+                        </View>
                         <Timeline
                             style={{ flex: 1, }}
                             data={this.data}
-                            circleSize={20}
+                            circleSize={25}
+                            innerCircle={'dot'}
+                            rowContainerStyle={{ padding: 5 }}
+                            separator
                             circleColor='rgb(45,156,219)'
                             lineColor='rgb(45,156,219)'
-                            timeContainerStyle={{ width: 100 }}
+                            timeContainerStyle={{ width: 120 }}
                             timeStyle={{ textAlign: 'center', backgroundColor: '#27ae60', color: 'white', padding: 5, borderRadius: 13 }}
                             descriptionStyle={{ color: 'gray' }}
                             options={{
                                 style: { paddingTop: 5 }
                             }}
-                           
+
                         />
+                        <View style={{ flexDirection: 'row', padding: 10 }}>
+                            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                                <Icon name='cubes' type='FontAwesome' style={{ color: '#27ae60' }} />
+                                <Text style={{ padding: 5 }}>3000 kilograms</Text>
+                            </View>
+                            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                                <Icon name='calendar' type='FontAwesome' style={{ color: '#27ae60' }} />
+                                <Text style={{ padding: 5 }}>Oct 14 2018</Text>
+                            </View>
+                        </View>
+
                     </View>
                 </Content>
             </Container>

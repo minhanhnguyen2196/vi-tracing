@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, Image, TouchableOpacity, Linking, Vibration, Alert, StyleSheet, Dimensions } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import { Button, Icon, Text } from 'native-base';
-import { getShipment } from '../../redux/actionCreator';
+import { setQRCode } from '../../redux/actionCreator';
 import { connect } from 'react-redux';
 
 import { URI } from '.././../utils/config';
@@ -35,14 +35,22 @@ class Scan extends Component {
                 'Content-Type': 'application/json',
             }
         })
-            .then(res => res.json())
-            .then(resJson => {
-                if (resJson.participantId === this.props.userInfo.participantId ) {
-                    this.props.navigation.navigate('ScanResult');
+            .then(res => {
+                if (res.status !== 404) {
+                    return res.json();
+                } else {
+                    this.props.navigation.navigate('ScanResult', { result: 'denied' });
+                    return Promise.reject(new Error('Fail!'));
                 }
-              //  alert(this.props.userInfo.participantId);
-                
             })
+            .then(resJson => {
+                    if (resJson.participantId === this.props.userInfo.participantId) {
+                        this.props.setQRCode(e.data);
+                        this.props.navigation.navigate('ScanResult', { result: 'success' });
+                    } else {
+                        this.props.navigation.navigate('ScanResult', { result: 'denied' });
+                    }
+                })
             .catch(err => console.log(err))
     }
     render() {
@@ -89,7 +97,6 @@ class Scan extends Component {
                             <View style={{ position: 'absolute', bottom: 20, justifyContent: 'center', flex: 1 }}>
                                 <Text style={{ color: 'white', alignSelf: 'center' }}>Place the QR Code inside the area to Scan it</Text>
                             </View>
-
                         </RNCamera>
                     }
                 </View>
@@ -206,7 +213,7 @@ function mapStateToProps(state) {
     };
 }
 
-export default connect(mapStateToProps, { getShipment })(Scan);
+export default connect(mapStateToProps, { setQRCode })(Scan);
 
 
 {/* <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>

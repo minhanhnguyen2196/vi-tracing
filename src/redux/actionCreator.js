@@ -13,8 +13,8 @@ export function selectRole(role) {
     }
 }
 
-export function setProductType(productType) {
-    return { type: 'SET_PRODUCT_TYPE', payload: productType};
+export function setProductName(productName) {
+    return { type: 'SET_PRODUCT_NAME', payload: productName};
 }
 
 export function setQuantity(quantity) {
@@ -31,4 +31,8 @@ export function getShipment(shipment) {
 
 export function getUserInfo(userInfo) {
     return { type: 'GET_USER_INFO', payload: userInfo}
+}
+
+export function setQRCode(code) {
+    return { type: 'SET_QRCODE', payload: code}
 }
