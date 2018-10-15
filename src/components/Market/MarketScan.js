@@ -39,8 +39,14 @@ class MarketScan extends Component {
                     this.props.navigation.navigate('ScanResult', { result: 'denied' });
                     return Promise.reject(new Error('Fail!'));
                 } else {
-                    this.props.getShipment(resJson);
-                    this.props.navigation.navigate('PackageDetailForMarket');
+                    if (resJson.shippedDateTime) {
+                        this.props.getShipment(resJson);
+                        this.props.navigation.navigate('PackageDetailForMarket');
+                    } else {
+                        alert('The shipment has not been delivered yet');
+                        this.props.navigation.navigate('Home');
+                    }
+                
                 }
             })
             .catch(err => console.log(err))
@@ -59,8 +65,8 @@ class MarketScan extends Component {
                     >
                         <Icon name='arrow-back' style={{ fontSize: 32, color: '#ffff', }} />
                     </Button>
-                    <View style={{ flex: 1, flexGrow: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                        <Image source={logo} />
+                    <View style={{ flex: 1, flexGrow: 1,  alignItems: 'center', justifyContent: 'center' }}>
+                     
                         <Text style={{ color: 'white', fontWeight: 'bold', paddingLeft: 5 }}>VI-TRACING</Text>
                     </View>
                 </View>

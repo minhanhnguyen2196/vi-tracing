@@ -33,8 +33,14 @@ class ScanShipper extends Component {
                     this.props.navigation.navigate('ScanResult', { result: 'denied' });
                     return Promise.reject(new Error('Fail!'));
                 } else {
-                    this.props.getShipment(resJson);
-                    this.props.navigation.navigate('FormShipper');
+                    if (resJson.verifiedDateTime) {
+                        this.props.getShipment(resJson);
+                        this.props.navigation.navigate('FormShipper');
+                    } else {
+                        alert('The Shipment has not been verified yet');
+                        this.props.navigation.navigate('Home');
+                    }
+
                 }
             })
             .catch(err => console.log(err))
@@ -53,8 +59,8 @@ class ScanShipper extends Component {
                     >
                         <Icon name='arrow-back' style={{ fontSize: 32, color: '#ffff', }} />
                     </Button>
-                    <View style={{ flex: 1, flexGrow: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                        <Image source={logo} />
+                    <View style={{ flex: 1, flexGrow: 1, alignItems: 'center', justifyContent: 'center' }}>
+                       
                         <Text style={{ color: 'white', fontWeight: 'bold', paddingLeft: 5 }}>VI-TRACING</Text>
                     </View>
                 </View>

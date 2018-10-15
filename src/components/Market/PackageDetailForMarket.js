@@ -57,7 +57,7 @@ class PackageDetailForMarket extends Component {
                             </View>
                             <View style={{ paddingTop: 10 }}>
                                 <Text style={{ fontSize: 14, color: '#555D65', paddingBottom: 5, }}>Verified Date</Text>
-                                <Text style={{ fontSize: 16, color: '#1e272e', fontWeight: '500' }}>{moment(shipment.verifiedDateTime).format('MMM DD YYYY')}</Text>
+                                <Text style={{ fontSize: 16, color: '#1e272e', fontWeight: '500' }}>{shipment.verifiedDateTime ?  moment(shipment.verifiedDateTime).format('MMM DD YYYY') : 'Not verified'}</Text>
                             </View>
                         </View>
                         <View style={{ flex: 1, marginRight: 20, paddingBottom: 20 }}>
@@ -67,11 +67,11 @@ class PackageDetailForMarket extends Component {
                             </View>
                             <View style={{ paddingLeft: 20, paddingBottom: 20, borderBottomColor: '#dfe6e9', borderBottomWidth: 0.5, paddingTop: 10 }}>
                                 <Text style={{ fontSize: 14, color: '#555D65', paddingBottom: 5 }}>Verifier</Text>
-                                <Text style={{ fontSize: 16, color: '#1e272e', fontWeight: '500' }}>{shipment.verifier.org.name}</Text>
+                                <Text style={{ fontSize: 16, color: '#1e272e', fontWeight: '500' }}>{shipment.verifier ? shipment.verifier.org.name : 'Undefined'}</Text>
                             </View>
                             <View style={{ paddingLeft: 20, paddingTop: 10 }}>
                                 <Text style={{ fontSize: 14, color: '#555D65', paddingBottom: 5 }}>Shipper</Text>
-                                <Text style={{ fontSize: 16, color: '#1e272e', fontWeight: '500' }}>{shipment.shipper.org.name}</Text>
+                                <Text style={{ fontSize: 16, color: '#1e272e', fontWeight: '500' }}>{shipment.shipper ? shipment.shipper.org.name : 'Undefined'}</Text>
                             </View>
                         </View>
                     </View>

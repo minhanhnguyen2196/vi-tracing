@@ -44,7 +44,7 @@ class InputForm extends Component {
                         <Icon name='arrow-back' style={{ fontSize: 32, color: '#ffff', }} />
                     </Button>
                     <View style={styles.logoContainer}>
-                        <Image source={logo} />
+                       
                         <Text style={{ color: 'white', fontWeight: 'bold', paddingLeft: 5 }}>VI-TRACING</Text>
                     </View>
                 </View>

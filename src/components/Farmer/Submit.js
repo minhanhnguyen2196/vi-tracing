@@ -66,8 +66,8 @@ class Submit extends Component {
                     >
                         <Icon name='arrow-back' style={{ fontSize: 32, color: '#ffff', }} />
                     </Button>
-                    <View style={{ flex: 1, flexGrow: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                        <Image source={logo} />
+                    <View style={{ flex: 1, flexGrow: 1, alignItems: 'center', justifyContent: 'center' }}>
+                       
                         <Text style={{ color: 'white', fontWeight: 'bold', paddingLeft: 5 }}>VI-TRACING</Text>
                     </View>
                 </View>

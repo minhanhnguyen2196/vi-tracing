@@ -70,8 +70,8 @@ class Home extends Component {
     render() {
         return (
             <Container style={{ flex: 1 }}>
-                <View style={{ backgroundColor: '#27ae60', height: 50, alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
-                    <Image source={logo} />
+                <View style={{ backgroundColor: '#27ae60', height: 50, alignItems: 'center', justifyContent: 'center' }}>
+            
                     <Text style={{ color: 'white', fontWeight: 'bold', paddingLeft: 5 }}>VI-TRACING</Text>
                 </View>
                 <Content padder contentContainerStyle={{ flex: 1 }}>
@@ -91,7 +91,7 @@ class Home extends Component {
                                     <Text style={{ fontSize: 16, color: '#1e272e', fontWeight: '500' }}>Scan QR Code</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
-                                    onPress={() => this.props.navigation.navigate('Profile')}
+                                    onPress={() => this.props.navigation.navigate('VerifiedProfile')}
                                     style={{ paddingTop: 10, justifyContent: 'center', alignItems: 'center' }}>
                                     <Icon name='user' type='FontAwesome' style={{ paddingBottom: 5, fontSize: 60, color: '#27ae60' }} />
                                     <Text style={{ fontSize: 16, color: '#1e272e', fontWeight: '500' }}>User Profile</Text>

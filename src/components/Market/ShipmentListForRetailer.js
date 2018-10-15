@@ -72,7 +72,7 @@ class ShipmentListForRetailer extends Component {
                     <Left style={{ flex: 1}}/>
                     <Right>
                         <TouchableOpacity 
-                        onPress={() => this.props.navigation.navigate('ShipmentDetail')}
+                        onPress={() => this.props.navigation.navigate('ShipmentDetail', { shipment: item })}
                         style={{ alignItems: 'center'}}>
                             <Text style={{ color: '#2980b9', fontSize: 15}}>VIEW DETAILS</Text>
                         </TouchableOpacity>
