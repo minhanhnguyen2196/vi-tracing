@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
-import { View, Alert, Image,  TouchableOpacity, TextInput, StyleSheet, KeyboardAvoidingView } from 'react-native';
+import { View, Alert, Image, Dimensions, TouchableOpacity, TextInput, StyleSheet, KeyboardAvoidingView } from 'react-native';
 import { Container, Content, Form, Label, Input, Item, Button, Picker, Icon, Text } from 'native-base';
 import { setQuantity, setProductName, setDescription } from '../../redux/actionCreator';
 import { connect } from 'react-redux';
+import Header from '../Header';
 
+const { width, height } = Dimensions.get('window');
 const logo  = require('../../assets/img/logo2.png')
 class InputForm extends Component {
     constructor(props) {
@@ -35,19 +37,7 @@ class InputForm extends Component {
         const { packageDetail } = this.props;
         return (
             <Container style={{ flex: 1 }}  >
-                <View style={styles.header}>
-                    <Button
-                        style={{ position: 'absolute', top: 5, left: 5 }}
-                        transparent
-                        onPress={() => this.props.navigation.goBack()}
-                    >
-                        <Icon name='arrow-back' style={{ fontSize: 32, color: '#ffff', }} />
-                    </Button>
-                    <View style={styles.logoContainer}>
-                       
-                        <Text style={{ color: 'white', fontWeight: 'bold', paddingLeft: 5 }}>VI-TRACING</Text>
-                    </View>
-                </View>
+                <Header icon={true} navigation={this.props.navigation} />
                 <Content padder>
                     <KeyboardAvoidingView style={{ flex: 1 }} behavior='position'>
                         <Text style={{ paddingVertical: 10, fontSize: 24, color: '#27ae60', fontWeight: 'bold', alignSelf: 'center' }}>Shipment Details</Text>
@@ -148,7 +138,7 @@ const styles = StyleSheet.create({
     },
     header: {
         backgroundColor: '#27ae60', 
-        height: 50, 
+        height: height * 0.08, 
         alignItems: 'center', 
         flexDirection: 'row', 
         justifyContent: 'center'

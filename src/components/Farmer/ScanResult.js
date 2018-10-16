@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
-import { View, Image, BackHandler } from 'react-native';
+import { View, Image, BackHandler, Dimensions, StyleSheet, TouchableOpacity } from 'react-native';
 import { Button, Icon, Text, Container, Content } from 'native-base';
 import * as Animatable from 'react-native-animatable';
+import Header from '../Header';
 
+const { height, width } = Dimensions.get('window');
 const logo = require('../../assets/img/logo2.png')
 class ScanResult extends Component {
     constructor(props) {
@@ -26,21 +28,17 @@ class ScanResult extends Component {
 
     render() {
         const { navigation } = this.props;
-        const result  = navigation.getParam('result');
+        const result = navigation.getParam('result');
         return (
             <Container>
-                <View style={{ backgroundColor: '#27ae60', height: 50, alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
-                    <Button
-                        style={{ position: 'absolute', top: 5, left: 5 }}
-                        transparent
+                <View style={styles.header}>
+                    <TouchableOpacity
+                        style={{ position: 'absolute', left: 15 }}
                         onPress={() => this.props.navigation.navigate('Home')}
                     >
                         <Icon name='arrow-back' style={{ fontSize: 32, color: '#ffff', }} />
-                    </Button>
-                    <View style={{ flex: 1, flexGrow: 1,  alignItems: 'center', justifyContent: 'center' }}>
-                       
-                        <Text style={{ color: 'white', fontWeight: 'bold', paddingLeft: 5 }}>VI-TRACING</Text>
-                    </View>
+                    </TouchableOpacity>
+                    <Text style={{ color: 'white', fontWeight: 'bold', paddingLeft: 5, fontSize: 18 }}>VI-TRACING</Text>
                 </View>
 
                 {
@@ -81,3 +79,13 @@ class ScanResult extends Component {
 }
 
 export default ScanResult;
+
+const styles = StyleSheet.create({
+    header: {
+        height: height * 0.08,
+        backgroundColor: '#27ae60',
+        alignItems: 'center',
+        flexDirection: 'row',
+        justifyContent: 'center'
+    },
+})

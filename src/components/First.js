@@ -31,8 +31,8 @@ class First extends Component {
                     style={{ justifyContent: 'center', alignItems: 'center', padding: 20 }}>
                     <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#27ae60' }}>VI-TRACING</Text>
                 </Animatable.View>
-                <View style={{ height: 300 }}>
-                    <Swiper style={styles.wrapper} dot={false} >
+                <View style={{ flex: 1 }}>
+                    <Swiper style={styles.wrapper} paginationStyle={{ bottom: -30 }} >
                         <View style={styles.slide}>
                             <Image source={farmer} style={{ width, height: height * 0.4 }} />
                         </View>
@@ -43,11 +43,11 @@ class First extends Component {
                             <Image source={ship} style={{ width, height: height * 0.4 }} />
                         </View>
                         <View style={styles.slide}>
-                            <Image source={market} style={{ width, height: height * 0.4 }} />
+                            <Image source={market} style={{ width, height: height * 0.5 }} />
                         </View>
                     </Swiper>
                 </View>
-                <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1, }}>
+                <View style={{ flex: 0.5, justifyContent: 'center', alignItems: 'center'}}>
                     <TouchableOpacity
                         onPress={() => this.props.navigation.navigate('Login')}
                         style={{ borderRadius: 25, height: 40, margin: 5, backgroundColor: '#27ae60', width: width * 0.9, justifyContent: 'center', alignItems: 'center' }}>
@@ -63,11 +63,11 @@ export default First;
 
 const styles = StyleSheet.create({
     slide: {
-        alignItems: 'center',
+        flex: 1
     },
     wrapper: {
         paddingTop: 30,
-        height: 400
+        flex: 1
     }
 })
 

@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { View, Image, BackHandler, ActivityIndicator } from 'react-native';
-import { Container, Content, Left, Right, Body, Icon, Button, Header, Text } from 'native-base';
+import { Container, Content, Left, Right, Body, Icon, Button, Text } from 'native-base';
 import { connect } from 'react-redux';
 import { URI } from '../../utils/config';
+import Header from '../Header';
 const verify = require('../../assets/img/verify.png');
 
 class VerifierOrg extends Component {
@@ -47,19 +48,7 @@ class VerifierOrg extends Component {
         // const { shipment } = this.props;
         return (
             <Container>
-                <View style={{ backgroundColor: '#27ae60', height: 50, alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
-                    <Button
-                        style={{ position: 'absolute', top: 5, left: 5 }}
-                        transparent
-                        onPress={() => this.props.navigation.goBack()}
-                    >
-                        <Icon name='arrow-back' style={{ fontSize: 32, color: '#ffff', }} />
-                    </Button>
-                    <View style={{ flex: 1, flexGrow: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-
-                        <Text style={{ color: 'white', fontWeight: 'bold' }}>Organization Details</Text>
-                    </View>
-                </View>
+               <Header icon={true} navigation={this.props.navigation} />
                 <Content padder>
                     {
                         loading && <ActivityIndicator animating color='green' size='large' />

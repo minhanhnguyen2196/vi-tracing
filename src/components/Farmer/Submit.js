@@ -13,6 +13,7 @@ import {
     Right,
     Body
 } from 'native-base';
+import Header from '../Header';
 import { connect } from 'react-redux';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { URI } from '../../utils/config';
@@ -58,19 +59,7 @@ class Submit extends Component {
         const { packageDetail, shipment } = this.props;
         return (
             <Container style={{ backgroundColor: '#F1F3F4' }} >
-                <View style={{ backgroundColor: '#27ae60', height: 50, alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
-                    <Button
-                        style={{ position: 'absolute', top: 5, left: 5 }}
-                        transparent
-                        onPress={() => this.props.navigation.goBack()}
-                    >
-                        <Icon name='arrow-back' style={{ fontSize: 32, color: '#ffff', }} />
-                    </Button>
-                    <View style={{ flex: 1, flexGrow: 1, alignItems: 'center', justifyContent: 'center' }}>
-                       
-                        <Text style={{ color: 'white', fontWeight: 'bold', paddingLeft: 5 }}>VI-TRACING</Text>
-                    </View>
-                </View>
+               <Header icon={true} navigation={this.props.navigation} />
                 <Content padder>
                     <Spinner
                         color='#27ae60'

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Container, Content, Button, Icon, Text } from 'native-base';
 import Timeline from 'react-native-timeline-listview';
+import Header from '../Header';
 
 var moment = require('moment');
 
@@ -59,19 +60,7 @@ class ShipmentDetail extends Component {
         const shipment = navigation.getParam('shipment');
         return (
             <Container style={{ flex: 1 }}>
-                <View style={{ backgroundColor: '#27ae60', height: 50, alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
-                    <Button
-                        style={{ position: 'absolute', top: 5, left: 5 }}
-                        transparent
-                        onPress={() => this.props.navigation.goBack()}
-                    >
-                        <Icon name='arrow-back' style={{ fontSize: 32, color: '#ffff', }} />
-                    </Button>
-                    <View style={{ flex: 1, flexGrow: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-
-                        <Text style={{ color: 'white', fontWeight: 'bold' }}>Shipment Details</Text>
-                    </View>
-                </View>
+                <Header icon={true} navigation={this.props.navigation} />
                 <Content padder >
                     <View style={{ flex: 1, padding: 5 }}>
                         <View style={{ flexDirection: 'row', padding: 10 }}>

@@ -4,6 +4,8 @@ import { Container, Content, Button, Icon, Item, Label, Left, Right, Body, Input
 import { URI } from '../../utils/config';
 import { connect } from 'react-redux';
 import Spinner from 'react-native-loading-spinner-overlay';
+import Header from '../Header';
+
 const logo  = require('../../assets/img/logo2.png')
 class VerifyFormMarket extends Component {
     constructor(props) {
@@ -95,20 +97,7 @@ class VerifyFormMarket extends Component {
         const { userInfo } = this.props;
         return (
             <Container>
-                <View style={styles.header}>
-                    <Button
-                        style={{ position: 'absolute', top: 5, left: 5 }}
-                        transparent
-                        onPress={() => this.props.navigation.goBack()}
-                    >
-                        <Icon name='arrow-back' style={{ fontSize: 32, color: '#ffff', }} />
-                    </Button>
-                    <View style={styles.logoContainer}>
-                       
-                        <Text style={{ color: 'white', fontWeight: 'bold', paddingLeft: 5 }}>VI-TRACING</Text>
-                    </View>
-
-                </View>
+                <Header icon={true} navigation={this.props.navigation} />
                 <Content padder>
                     <Spinner
                         color='#27ae60'

@@ -4,6 +4,7 @@ import { RNCamera } from 'react-native-camera';
 import { Button, Icon, Text } from 'native-base';
 import { setQRCode } from '../../redux/actionCreator';
 import { connect } from 'react-redux';
+import Header from '../Header';
 
 import { URI } from '.././../utils/config';
 const logo = require('../../assets/img/logo2.png')
@@ -44,33 +45,20 @@ class Scan extends Component {
                 }
             })
             .then(resJson => {
-                    if (resJson.createdBy === this.props.userInfo.id) {
-                        this.props.setQRCode(e.data);
-                        this.props.navigation.navigate('ScanResult', { result: 'success' });
-                    } else {
-                        this.props.navigation.navigate('ScanResult', { result: 'denied' });
-                    }
-                })
+                if (resJson.createdBy === this.props.userInfo.id) {
+                    this.props.setQRCode(e.data);
+                    this.props.navigation.navigate('ScanResult', { result: 'success' });
+                } else {
+                    this.props.navigation.navigate('ScanResult', { result: 'denied' });
+                }
+            })
             .catch(err => console.log(err))
     }
     render() {
         const { scanning } = this.state;
         return (
             <View style={{ flex: 1 }}>
-                <View style={{ backgroundColor: '#27ae60', height: 50, alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
-                    <Button
-                        style={{ position: 'absolute', top: 5, left: 5 }}
-                        transparent
-                        onPress={() => this.props.navigation.goBack()}
-                    >
-                        <Icon name='arrow-back' style={{ fontSize: 32, color: '#ffff', }} />
-                    </Button>
-                    <View style={{ flex: 1, flexGrow: 1, alignItems: 'center', justifyContent: 'center' }}>
-                        
-                        <Text style={{ color: 'white', fontWeight: 'bold', paddingLeft: 5 }}>VI-TRACING</Text>
-                    </View>
-                </View>
-
+                <Header icon={true} navigation={this.props.navigation}/>
                 <View style={styles.container}>
                     {
                         scanning &&
@@ -108,11 +96,16 @@ class Scan extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-
+    },
+    header: {
+        height: deviceHeight * 0.08,
+        backgroundColor: '#27ae60',
+        alignItems: 'center',
+        flexDirection: 'row',
+        justifyContent: 'center'
     },
     preview: {
         flex: 1,
-
         alignItems: 'center',
     },
     capture: {

@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
-import { View, TouchableOpacity, Image } from 'react-native';
+import { View, TouchableOpacity, Image, Dimensions, StyleSheet } from 'react-native';
 import { Container, Content, Button, Icon, Text } from 'native-base';
+import Header from './Header';
 import { connect } from 'react-redux';
 const logo = require('../assets/img/logo2.png')
+const { width, height} = Dimensions.get('window');
+
 class Home extends Component {
     constructor(props) {
         super(props);
@@ -70,10 +73,7 @@ class Home extends Component {
     render() {
         return (
             <Container style={{ flex: 1 }}>
-                <View style={{ backgroundColor: '#27ae60', height: 50, alignItems: 'center', justifyContent: 'center' }}>
-            
-                    <Text style={{ color: 'white', fontWeight: 'bold', paddingLeft: 5 }}>VI-TRACING</Text>
-                </View>
+                <Header icon={false} navigation={this.props.navigation}/>
                 <Content padder contentContainerStyle={{ flex: 1 }}>
                     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', height: '50%' }}>
                         <Text style={{ alignSelf: 'center', fontSize: 26, color: '#2f3640', fontWeight: 'bold' }}>
@@ -125,3 +125,12 @@ function mapStateToProps(state) {
 }
 
 export default connect(mapStateToProps)(Home);
+
+const styles = StyleSheet.create({
+    header: {
+        backgroundColor: '#27ae60', 
+        height: height * 0.08, 
+        alignItems: 'center', 
+        justifyContent: 'center'
+    }
+})

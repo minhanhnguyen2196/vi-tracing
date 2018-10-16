@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { View, StyleSheet, ScrollView, Image, ActivityIndicator, FlatList } from 'react-native';
 import { Container, Content, Button, Icon, Text, Card, CardItem, Left, Right, Body, Thumbnail } from 'native-base';
 import { URI } from '../../utils/config';
+import Header from '../Header';
 var moment = require('moment');
 
 class ShipmentListForFarmer extends Component {
@@ -71,18 +72,7 @@ class ShipmentListForFarmer extends Component {
         const { loading } = this.state;
         return (
             <Container style={{ backgroundColor: '#dfe4ea' }}>
-                <View style={{ backgroundColor: '#27ae60', height: 50, alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
-                    <Button
-                        style={{ position: 'absolute', top: 5, left: 5 }}
-                        transparent
-                        onPress={() => this.props.navigation.goBack()}
-                    >
-                        <Icon name='arrow-back' style={{ fontSize: 32, color: '#ffff', }} />
-                    </Button>
-                    <View style={{ flex: 1, flexGrow: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                        <Text style={{ color: 'white', fontWeight: 'bold' }}>Shipment List</Text>
-                    </View>
-                </View>
+                <Header icon={true} navigation={this.props.navigation} />
                 <View style={{ margin: 10, flex: 1 }}>
                     {
                         loading && <ActivityIndicator animating color='green' size='large' />

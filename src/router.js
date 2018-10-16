@@ -37,6 +37,8 @@ import VerifierOrg from './components/OrgDetail/VerifierOrg';
 import FarmerOrg from './components/OrgDetail/FarmerOrg';
 import ShipperOrg from './components/OrgDetail/ShipperOrg';
 
+import Header from './components/Header';
+
 
 export const AppStack = createStackNavigator({
     First, 
@@ -44,6 +46,7 @@ export const AppStack = createStackNavigator({
     LoadingScreen,
     Login,
     Scan,
+    Header,
     Home,
     Profile,
     VerifiedProfile,

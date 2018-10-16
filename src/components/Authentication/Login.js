@@ -73,7 +73,7 @@ class Login extends Component {
                         this.setState({ visible: false }, () => {
                             Alert.alert(
                                 'Login Successfull',
-                                'Your credentials are OK',
+                                'Your credentials are authenticated',
                                 [
                                     { text: 'OK', onPress: () => this.props.navigation.navigate('Home') },
                                 ],
