@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Image, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import { View, Image, StyleSheet, Dimensions, TouchableOpacity, BackHandler } from 'react-native';
 import { Container, Content, Button, Icon, Text } from 'native-base';
 import * as Animatable from 'react-native-animatable';
 import Swiper from 'react-native-swiper';
@@ -16,6 +16,19 @@ class First extends Component {
     constructor(props) {
         super(props);
         this.state = {};
+    }
+
+    componentDidMount() {
+        BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
+    }
+
+    componentWillUnmount() {
+        BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
+    }
+
+    handleBackPress = () => {
+        BackHandler.exitApp();
+        return true;
     }
 
     render() {

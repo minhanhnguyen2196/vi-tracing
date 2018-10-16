@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Alert, KeyboardAvoidingView, TouchableOpacity, Animated, TextInput } from 'react-native';
+import { View, Alert, KeyboardAvoidingView, TouchableOpacity, Animated, TextInput, BackHandler } from 'react-native';
 import { Container, Input, Item, Label, Text, Button, Icon, Form, Content, Picker, Left, Header } from 'native-base';
 import * as Animatable from 'react-native-animatable';
 import { connect } from 'react-redux';
@@ -16,6 +16,19 @@ class Login extends Component {
             password: '',
             visible: false
         };
+    }
+
+    componentDidMount() {
+        BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
+    }
+
+    componentWillUnmount() {
+        BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
+    }
+
+    handleBackPress = () => {
+        this.props.navigation.goBack();
+        return true;
     }
 
     componentWillMount() {
