@@ -1,23 +1,24 @@
 import React, { Component } from 'react';
-import { 
-    View, 
+import {
+    View,
     Alert,
-    BackHandler, 
-    Keyboard, 
-    KeyboardAvoidingView, 
-    StyleSheet, 
-    TextInput, 
+    BackHandler,
+    Keyboard,
+    KeyboardAvoidingView,
+    StyleSheet,
+    TextInput,
     DatePickerAndroid, DatePickerIOS, Platform
 } from 'react-native';
-import { 
-    Container, 
-    Content, 
-    Button, 
-    Text, 
-    ListItem, 
-    Left, 
-    Right, 
-    Radio } from 'native-base';
+import {
+    Container,
+    Content,
+    Button,
+    Text,
+    ListItem,
+    Left,
+    Right,
+    Radio, DatePicker
+} from 'native-base';
 import Header from '../Header';
 import { connect } from 'react-redux';
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -31,7 +32,7 @@ class VerifyForm extends Component {
         this.state = {
             isFocused1: false,
             isFocused2: false,
-            expiredDate: '',
+            expiredDate: new Date(),
             note: '',
             visible: false,
             submitted: false,
@@ -50,18 +51,18 @@ class VerifyForm extends Component {
         return true;
     }
 
-
+    setDate = (newDate) => {
+        this.setState({ expiredDate: moment(newDate).format('ddd MMM DD YYYY') });
+    }
     async pickDate() {
-        let datePicker = DatePickerAndroid;
-        if (Platform.OS === 'ios') datePicker = DatePickerIOS;
         try {
-            const { action, year, month, day } = await datePicker.open({
+            const { action, year, month, day } = await DatePickerAndroid.open({
                 // Use `new Date()` for current date.
                 // May 25 2020. Month 0 is January.
                 date: new Date(),
             });
 
-            if (action !== datePicker.dismissedAction) {
+            if (action !== DatePickerAndroid.dismissedAction) {
                 // Selected year, month (0-11), day
                 console.log(year, month, day)
                 this.setState({ expiredDate: moment(year + '-' + (month + 1) + '-' + day).format('ddd MMM DD YYYY') })
@@ -70,6 +71,7 @@ class VerifyForm extends Component {
             console.warn('Cannot open date picker', message);
         }
     }
+
 
     shipmentVerified = () => {
         const { shipment, userInfo } = this.props;
@@ -180,18 +182,32 @@ class VerifyForm extends Component {
                         </View>
                         <View>
                             <Text style={styles.label}>Expired Date</Text>
-                            <TextInput
-                                onBlur={() => this.setState({ isFocused1: false })}
-                                onFocus={() => {
-                                    Keyboard.dismiss();
-                                    this.setState({ isFocused1: true });
-                                    this.pickDate();
-                                }}
-                                style={this.state.isFocused1 ? styles.focusInput : styles.input}
-                                value={this.state.expiredDate}
-                                onSubmitEditing={() => this.note.focus()}
+                            <View style={{
+                                height: 45,
+                                borderRadius: 5,
+                                borderColor: '#95a5a6',
+                                borderWidth: 0.5,
+                                padding: 5,
+                                
+                                backgroundColor: '#FBFBFC',
+                                marginHorizontal: 15
+                            }}>
+                                <DatePicker
+                                    defaultDate={new Date()}
+                                    formatChosenDate={date => { return moment(date).format('ddd MMM DD YYYY')}}
+                                    locale={"en"}
+                                    timeZoneOffsetInMinutes={undefined}
+                                    modalTransparent={false}
+                                    animationType={"fade"}
 
-                            />
+                                    placeHolderText="Select date"
+                                    textStyle={{ color: "black", fontSize: 18 }}
+                                    placeHolderTextStyle={{ color: "#d3d3d3" }}
+                                    onDateChange={this.setDate}
+                                />
+                            </View>
+
+                           
                         </View>
                         <View>
                             <Text style={styles.label}>Note</Text>
@@ -201,7 +217,6 @@ class VerifyForm extends Component {
                                 style={this.state.isFocused2 ? styles.focusInput : styles.input}
                                 ref={(input) => this.note = input}
                                 onChangeText={(text) => this.setState({ note: text })}
-
                             />
                         </View>
                         <Text style={styles.label}>Verify Status</Text>
@@ -240,7 +255,6 @@ class VerifyForm extends Component {
                             block style={styles.btn}>
                             <Text style={{ color: 'white', fontSize: 16 }}>SUBMIT PERMANENTLY</Text>
                         </Button>
-
                     </KeyboardAvoidingView>
                 </Content>
             </Container>

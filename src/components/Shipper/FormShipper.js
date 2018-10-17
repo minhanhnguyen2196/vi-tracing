@@ -32,17 +32,12 @@ class FormShipper extends Component {
     }
 
     async pickDate() {
-        let datePicker = DatePickerAndroid;
-        if (Platform.OS === 'ios') datePicker = DatePickerIOS
         try {
-            const { action, year, month, day } = await datePicker.open({
-                // Use `new Date()` for current date.
-                // May 25 2020. Month 0 is January.
+            const { action, year, month, day } = await DatePickerAndroid.open({
                 date: new Date(),
             });
 
-            if (action !== datePicker.dismissedAction) {
-                // Selected year, month (0-11), day
+            if (action !== DatePickerAndroid.dismissedAction) {
                 console.log(year, month, day)
                 this.setState({ expiredDate: moment(year + '/' + (month + 1) + '/' + day).format('ddd MMM DD YYYY') })
 
