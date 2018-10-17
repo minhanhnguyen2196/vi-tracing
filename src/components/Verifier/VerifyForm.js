@@ -188,7 +188,7 @@ class VerifyForm extends Component {
                                 borderColor: '#95a5a6',
                                 borderWidth: 0.5,
                                 padding: 5,
-                                
+                                justifyContent: 'center',
                                 backgroundColor: '#FBFBFC',
                                 marginHorizontal: 15
                             }}>

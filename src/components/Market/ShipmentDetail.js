@@ -116,7 +116,7 @@ class ShipmentDetail extends Component {
                             </View>
                             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                                 <Icon name='calendar' type='FontAwesome' style={{ color: '#27ae60' }} />
-                                <Text style={{ padding: 5 }}>moment(shipment.expiredDateTime).format('MMM DD')</Text>
+                                <Text style={{ padding: 5 }}>{moment(shipment.expiredDateTime).format('MMM DD YYYY')}</Text>
                             </View>
                         </View>
                     </View>

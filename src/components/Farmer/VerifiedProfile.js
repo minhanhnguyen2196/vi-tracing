@@ -6,7 +6,7 @@ import Header from '../Header';
 import { URI } from '../../utils/config';
 const farmer = require('../../assets/img/farmer.jpg');
 const shipper = require('../../assets/img/shipper.png');
-const verifier = require('../../assets/img/verifier.png');
+const verifier = require('../../assets/img/verifier1.png');
 const retailer = require('../../assets/img/retailer.png');
 
 class VerifiedProfile extends Component {
