@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, ScrollView, Image, ActivityIndicator, FlatList } from 'react-native';
+import { View, BackHandler, ScrollView, Image, ActivityIndicator, FlatList } from 'react-native';
 import { Container, Content, Button, Icon, Text, Card, CardItem, Left, Right, Body, Thumbnail } from 'native-base';
 import Header from '../Header';
 import { URI } from '../../utils/config';
@@ -12,6 +12,17 @@ class ShipmentListForShipper extends Component {
             shipmentList: [],
             loading: true
         };
+    }
+
+    componentDidMount() {
+        BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
+    }
+    componentWillUnmount() {
+        BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
+    }
+    handleBackPress = () => {
+        this.props.navigation.goBack();
+        return true;
     }
 
     componentWillMount() {

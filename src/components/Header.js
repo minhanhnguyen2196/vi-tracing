@@ -14,7 +14,8 @@ class Header extends Component {
                 {
                     this.props.icon &&
                     <TouchableOpacity
-                        style={{ position: 'absolute', left: 15,  }}
+                        hitSlop={{ top: 30, bottom: 20, left: 20, right: 20 }}
+                        style={{ padding: 10, position: 'absolute', left: 10, top: 10, bottom: 10, justifyContent: 'center', alignItems: 'center' }}
                         onPress={() => this.props.navigation.goBack()}
                     >
                         <Icon name='arrow-back' style={{ fontSize: 32, color: '#ffff', }} />
@@ -30,7 +31,7 @@ export default Header;
 
 const styles = StyleSheet.create({
     header: {
-        height: height * 0.09,
+        height: height * 0.1,
         backgroundColor: '#27ae60',
         alignItems: 'center',
         flexDirection: 'row',

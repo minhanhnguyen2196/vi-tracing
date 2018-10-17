@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Alert, Image, TouchableOpacity, Keyboard, KeyboardAvoidingView, StyleSheet, TextInput, DatePickerAndroid } from 'react-native';
+import { View, Alert, BackHandler, TouchableOpacity, Keyboard, KeyboardAvoidingView, StyleSheet, TextInput, DatePickerAndroid } from 'react-native';
 import { Container, Content, Button, Icon, Item, Label, Input, Text, Form, ListItem, Left, Right, Body, Radio } from 'native-base';
 import { connect } from 'react-redux';
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -7,7 +7,7 @@ import { URI } from '../../utils/config';
 import Header from '../Header';
 console.disableYellowBox = true;
 var moment = require('moment');
-const logo  = require('../../assets/img/logo2.png')
+const logo = require('../../assets/img/logo2.png')
 
 class FormShipper extends Component {
     constructor(props) {
@@ -18,6 +18,17 @@ class FormShipper extends Component {
             visible: false,
             submitted: false
         };
+    }
+
+    componentDidMount() {
+        BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
+    }
+    componentWillUnmount() {
+        BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
+    }
+    handleBackPress = () => {
+        this.props.navigation.goBack();
+        return true;
     }
 
     async pickDate() {
@@ -70,6 +81,7 @@ class FormShipper extends Component {
                     .then(resJson => {
                         console.log(resJson);
                         this.setState({ visible: false, submitted: true });
+                        this.props.navigation.navigate('SubmitResult');
                     })
                     .catch(err => console.log(err))
             })
@@ -111,20 +123,13 @@ class FormShipper extends Component {
                                 onChangeText={(text) => this.setState({ note: text })}
                             />
                         </View>
-                        {
-                            submitted ?
-                                <Button
-                                    onPress={() => this.props.navigation.navigate('Home')}
-                                    block style={{ backgroundColor: '#27ae60', marginTop: 40, marginHorizontal: 15 }}>
-                                    <Text style={{ color: 'white', fontSize: 16 }}>BACK TO HOME</Text>
-                                </Button>
-                                :
-                                <Button
-                                    onPress={() => this.shipmentShipped()}
-                                    block style={{ backgroundColor: '#27ae60', marginTop: 40, marginHorizontal: 15 }}>
-                                    <Text style={{ color: 'white', fontSize: 16 }}>SUBMIT PERMANENTLY</Text>
-                                </Button>
-                        }
+
+                        <Button
+                            onPress={() => this.shipmentShipped()}
+                            block style={{ backgroundColor: '#27ae60', marginTop: 40, marginHorizontal: 15 }}>
+                            <Text style={{ color: 'white', fontSize: 16 }}>SUBMIT PERMANENTLY</Text>
+                        </Button>
+
                     </KeyboardAvoidingView>
                 </Content>
             </Container>

@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Header from '../Header';
 
-const logo  = require('../../assets/img/logo2.png')
+const logo = require('../../assets/img/logo2.png')
 class VerifyFormMarket extends Component {
     constructor(props) {
         super(props);
@@ -50,6 +50,7 @@ class VerifyFormMarket extends Component {
                     .then(resJson => {
                         console.log(resJson);
                         this.setState({ visible: false, submitted: true })
+                        this.props.navigation.navigate('SubmitResult');
                     })
                     .catch(err => console.log(err))
             })
@@ -160,23 +161,17 @@ class VerifyFormMarket extends Component {
                                 />
                             </Right>
                         </ListItem>
-                        {
-                            submitted ?
-                                <Button
-                                    onPress={() => this.props.navigation.navigate('Home')}
-                                    block style={styles.btn}>
-                                    <Text style={{ color: 'white', fontSize: 16 }}>BACK TO HOME</Text>
-                                </Button>
-                                :
-                                <Button
-                                    onPress={() => {
-                                        if (status) this.shipmentReceived();
-                                        else this.shipmentRejected(); 
-                                    }}
-                                    block style={styles.btn}>
-                                    <Text style={{ color: 'white', fontSize: 16 }}>SUBMIT PERMANENTLY</Text>
-                                </Button>
-                        }
+
+
+                        <Button
+                            onPress={() => {
+                                if (status) this.shipmentReceived();
+                                else this.shipmentRejected();
+                            }}
+                            block style={styles.btn}>
+                            <Text style={{ color: 'white', fontSize: 16 }}>SUBMIT PERMANENTLY</Text>
+                        </Button>
+
                     </KeyboardAvoidingView>
                 </Content>
             </Container>
@@ -221,27 +216,27 @@ const styles = StyleSheet.create({
         borderWidth: 1
     },
     header: {
-        backgroundColor: '#27ae60', 
-        height: 50, 
-        alignItems: 'center', 
-        flexDirection: 'row', 
+        backgroundColor: '#27ae60',
+        height: 50,
+        alignItems: 'center',
+        flexDirection: 'row',
         justifyContent: 'center'
     },
     logoContainer: {
-        flex: 1, 
-        flexDirection: 'row', 
-        alignItems: 'center', 
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
         justifyContent: 'center'
     },
     label: {
-        color: '#2d3436', 
-        paddingVertical: 10, 
-        paddingLeft: 15, 
+        color: '#2d3436',
+        paddingVertical: 10,
+        paddingLeft: 15,
         fontSize: 15
     },
     btn: {
-        backgroundColor: '#27ae60', 
-        marginTop: 40, 
+        backgroundColor: '#27ae60',
+        marginTop: 40,
         marginHorizontal: 15
     }
 })

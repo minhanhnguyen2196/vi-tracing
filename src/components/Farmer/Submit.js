@@ -17,7 +17,7 @@ import Header from '../Header';
 import { connect } from 'react-redux';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { URI } from '../../utils/config';
-const logo  = require('../../assets/img/logo2.png')
+const logo = require('../../assets/img/logo2.png')
 class Submit extends Component {
     constructor(props) {
         super(props);
@@ -34,7 +34,7 @@ class Submit extends Component {
             "productName": packageDetail.productName,
             "note": packageDetail.descr,
             "quantity": packageDetail.quantity,
-            "qrCode":  packageDetail.qrCode,
+            "qrCode": packageDetail.qrCode,
             "farmerId": userInfo.id
         }
         this.setState({ visible: true }, () => {
@@ -49,7 +49,8 @@ class Submit extends Component {
                 .then(res => res.json())
                 .then(resJson => {
                     console.log(resJson);
-                    this.setState({ visible: false, submitted: true});
+                    this.setState({ visible: false, submitted: true });
+                    this.props.navigation.navigate('SubmitResult');
                 })
                 .catch(err => console.log(err))
         })
@@ -59,7 +60,7 @@ class Submit extends Component {
         const { packageDetail, shipment } = this.props;
         return (
             <Container style={{ backgroundColor: '#F1F3F4' }} >
-               <Header icon={true} navigation={this.props.navigation} />
+                <Header icon={true} navigation={this.props.navigation} />
                 <Content padder>
                     <Spinner
                         color='#27ae60'
@@ -125,27 +126,13 @@ class Submit extends Component {
                                 </Right>
                             </CardItem>
                         </Card>
-                        {
-                            (this.state.submitted) ?
-                                <View>
-                                    <Button
-                                        onPress={() => this.props.navigation.navigate('Home')}
-                                        block style={{ backgroundColor: '#27ae60', marginTop: 20 }} >
-                                        <Text>
-                                            NEW PACKAGE
-                                    </Text>
-                                    </Button>
-                                </View>
-
-                                : <Button
-                                    onPress={() => this.shipmentPacked()}
-                                    block style={{ backgroundColor: '#27ae60', marginTop: 20 }} >
-                                    <Text>
-                                        SUBMIT PERMANENTLY
-                                    </Text>
-                                </Button>
-                        }
-
+                        <Button
+                            onPress={() => this.shipmentPacked()}
+                            block style={{ backgroundColor: '#27ae60', marginTop: 20 }} >
+                            <Text>
+                                SUBMIT PERMANENTLY
+                            </Text>
+                        </Button>
                     </View>
                 </Content>
             </Container>

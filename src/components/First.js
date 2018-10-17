@@ -47,13 +47,13 @@ class First extends Component {
                 <View style={{ flex: 1 }}>
                     <Swiper style={styles.wrapper} paginationStyle={{ bottom: -30 }} >
                         <View style={styles.slide}>
-                            <Image source={farmer} style={{ width, height: height * 0.4 }} />
+                            <Image source={farmer} style={{ width, height: height * 0.5 }} />
                         </View>
                         <View style={styles.slide}>
-                            <Image source={verify} style={{ width, height: height * 0.4 }} />
+                            <Image source={verify} style={{ width, height: height * 0.5 }} />
                         </View>
                         <View style={styles.slide}>
-                            <Image source={ship} style={{ width, height: height * 0.4 }} />
+                            <Image source={ship} style={{ width, height: height * 0.5 }} />
                         </View>
                         <View style={styles.slide}>
                             <Image source={market} style={{ width, height: height * 0.5 }} />

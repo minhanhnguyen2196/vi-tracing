@@ -1,13 +1,30 @@
 import React, { Component } from 'react';
-import { View, Alert, Image, TouchableOpacity, Keyboard, KeyboardAvoidingView, StyleSheet, TextInput, DatePickerAndroid } from 'react-native';
-import { Container, Content, Button, Icon, Item, Label, Input, Text, Form, ListItem, Left, Right, Body, Radio } from 'native-base';
-import Header from '../Header' ;
+import { 
+    View, 
+    Alert,
+    BackHandler, 
+    Keyboard, 
+    KeyboardAvoidingView, 
+    StyleSheet, 
+    TextInput, 
+    DatePickerAndroid 
+} from 'react-native';
+import { 
+    Container, 
+    Content, 
+    Button, 
+    Text, 
+    ListItem, 
+    Left, 
+    Right, 
+    Radio } from 'native-base';
+import Header from '../Header';
 import { connect } from 'react-redux';
 import Spinner from 'react-native-loading-spinner-overlay';
 console.disableYellowBox = true;
 var moment = require('moment');
 import { URI } from '../../utils/config';
-const logo  = require('../../assets/img/logo2.png')
+const logo = require('../../assets/img/logo2.png')
 class VerifyForm extends Component {
     constructor(props) {
         super(props);
@@ -21,6 +38,18 @@ class VerifyForm extends Component {
             status: true
         };
     }
+
+    componentDidMount() {
+        BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
+    }
+    componentWillUnmount() {
+        BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
+    }
+    handleBackPress = () => {
+        this.props.navigation.goBack();
+        return true;
+    }
+
 
     async pickDate() {
         try {
@@ -72,6 +101,7 @@ class VerifyForm extends Component {
                     .then(resJson => {
                         console.log(resJson);
                         this.setState({ visible: false, submitted: true });
+                        this.props.navigation.navigate('SubmitResult');
                     })
                     .catch(err => console.log(err))
             })
@@ -108,6 +138,7 @@ class VerifyForm extends Component {
                     .then(resJson => {
                         console.log(resJson);
                         this.setState({ visible: false, submitted: true });
+                        this.props.navigation.navigate('SubmitResult');
                     })
                     .catch(err => console.log(err))
             })
@@ -198,22 +229,16 @@ class VerifyForm extends Component {
                                 />
                             </Right>
                         </ListItem>
-                        {
-                            submitted ?
-                                <Button
-                                    onPress={() => this.props.navigation.navigate('Home')}
-                                    block style={styles.btn}>
-                                    <Text style={{ color: 'white', fontSize: 16 }}>BACK TO HOME</Text>
-                                </Button> :
-                                <Button
-                                    onPress={() => {
-                                        if (status) this.shipmentVerified();
-                                        else this.shipmentRejected();
-                                    }}
-                                    block style={styles.btn}>
-                                    <Text style={{ color: 'white', fontSize: 16 }}>SUBMIT PERMANENTLY</Text>
-                                </Button>
-                        }
+
+                        <Button
+                            onPress={() => {
+                                if (status) this.shipmentVerified();
+                                else this.shipmentRejected();
+                            }}
+                            block style={styles.btn}>
+                            <Text style={{ color: 'white', fontSize: 16 }}>SUBMIT PERMANENTLY</Text>
+                        </Button>
+
                     </KeyboardAvoidingView>
                 </Content>
             </Container>

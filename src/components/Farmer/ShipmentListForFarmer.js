@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, ScrollView, Image, ActivityIndicator, FlatList } from 'react-native';
+import { View, StyleSheet, ScrollView, Image, ActivityIndicator, FlatList, BackHandler } from 'react-native';
 import { Container, Content, Button, Icon, Text, Card, CardItem, Left, Right, Body, Thumbnail } from 'native-base';
 import { URI } from '../../utils/config';
 import Header from '../Header';
@@ -14,6 +14,17 @@ class ShipmentListForFarmer extends Component {
         };
     }
 
+    componentDidMount() {
+        BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
+    }
+    componentWillUnmount() {
+        BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
+    }
+    handleBackPress = () => {
+        this.props.navigation.navigate('Home');
+        return true;
+    }
+    
     componentWillMount() {
         const url = URI + '/Shipment';
         const data = { filter: '{"include":"resolve"}' };

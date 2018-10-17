@@ -82,17 +82,9 @@ class Login extends Component {
                         }
                     })
                     .then(resJson => {
+                        this.setState({ visible: false });
                         this.props.getUserInfo(resJson);
-                        this.setState({ visible: false }, () => {
-                            Alert.alert(
-                                'Login Successfull',
-                                'Your credentials are authenticated',
-                                [
-                                    { text: 'OK', onPress: () => this.props.navigation.navigate('Home') },
-                                ],
-                                { cancelable: false }
-                            )
-                        });
+                        this.props.navigation.navigate('Home');
                     })
                     .catch(err => console.log(err))
             })

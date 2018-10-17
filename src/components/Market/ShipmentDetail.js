@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, BackHandler } from 'react-native';
 import { Container, Content, Button, Icon, Text } from 'native-base';
 import Timeline from 'react-native-timeline-listview';
 import Header from '../Header';
@@ -14,6 +14,16 @@ class ShipmentDetail extends Component {
 
             ]
         };
+    }
+    componentDidMount() {
+        BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
+    }
+    componentWillUnmount() {
+        BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
+    }
+    handleBackPress = () => {
+        this.props.navigation.goBack();
+        return true;
     }
 
     componentWillMount() {

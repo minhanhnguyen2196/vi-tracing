@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Image, TouchableOpacity, Linking, Vibration, Alert, StyleSheet, Dimensions } from 'react-native';
+import { View, Image, TouchableOpacity, Linking, Vibration, Alert, StyleSheet, Dimensions, BackHandler } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import { Button, Icon, Text } from 'native-base';
 import { setQRCode } from '../../redux/actionCreator';
@@ -54,11 +54,22 @@ class Scan extends Component {
             })
             .catch(err => console.log(err))
     }
+    componentDidMount() {
+        BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
+    }
+    componentWillUnmount() {
+        BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
+    }
+    handleBackPress = () => {
+        this.props.navigation.goBack();
+        return true;
+    }
+
     render() {
         const { scanning } = this.state;
         return (
             <View style={{ flex: 1 }}>
-                <Header icon={true} navigation={this.props.navigation}/>
+                <Header icon={true} navigation={this.props.navigation} />
                 <View style={styles.container}>
                     {
                         scanning &&
@@ -96,13 +107,6 @@ class Scan extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-    },
-    header: {
-        height: deviceHeight * 0.08,
-        backgroundColor: '#27ae60',
-        alignItems: 'center',
-        flexDirection: 'row',
-        justifyContent: 'center'
     },
     preview: {
         flex: 1,

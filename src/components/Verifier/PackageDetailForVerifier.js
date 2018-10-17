@@ -22,6 +22,7 @@ class PackageDetailForVerifier extends Component {
     }
     render() {
         const { shipment } = this.props;
+        const note = shipment.notes.split('_');
         return (
             <Container>
                 <Content padder>
@@ -53,7 +54,7 @@ class PackageDetailForVerifier extends Component {
                             </View>
                             <View style={{ paddingTop: 10 }}>
                                 <Text style={{ fontSize: 14, color: '#555D65', paddingBottom: 5, }}>Description</Text>
-                                <Text style={{ fontSize: 16, color: '#1e272e', fontWeight: '500' }}>{shipment.notes}</Text>
+                                <Text style={{ fontSize: 16, color: '#1e272e', fontWeight: '500' }}>{note[0]}</Text>
                             </View>
                         </View>
                         <View style={{ flex: 1, marginRight: 20, paddingBottom: 20 }}>

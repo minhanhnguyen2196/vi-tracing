@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Image, TouchableOpacity, Linking, Vibration, Dimensions, StyleSheet } from 'react-native';
+import { View, Image, TouchableOpacity, Linking, Vibration, Dimensions, StyleSheet, BackHandler } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import { Button, Icon, Text } from 'native-base';
 import { getShipment } from '../../redux/actionCreator';
@@ -53,6 +53,16 @@ class MarketScan extends Component {
             .catch(err => console.log(err))
     }
 
+    componentDidMount() {
+        BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
+    }
+    componentWillUnmount() {
+        BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
+    }
+    handleBackPress = () => {
+        this.props.navigation.goBack();
+        return true;
+    }
 
     render() {
         const { scanning } = this.state;

@@ -104,9 +104,11 @@ class Home extends Component {
                                     <Icon name='history' type='FontAwesome' style={{ paddingBottom: 5, fontSize: 60, color: '#27ae60' }} />
                                     <Text style={{ fontSize: 16, color: '#1e272e', fontWeight: '500' }}>Shipment Lists</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={{ paddingLeft: 20, paddingTop: 10, justifyContent: 'center', alignItems: 'center' }}>
-                                    <Icon name='question-circle' type='FontAwesome' style={{ paddingBottom: 5, fontSize: 60, color: '#27ae60' }} />
-                                    <Text style={{ fontSize: 16, color: '#1e272e', fontWeight: '500' }}>Help</Text>
+                                <TouchableOpacity 
+                                onPress={() => this.props.navigation.navigate('Login')}
+                                style={{ paddingLeft: 20, paddingTop: 10, justifyContent: 'center', alignItems: 'center' }}>
+                                    <Icon name='sign-out' type='FontAwesome' style={{ paddingBottom: 5, fontSize: 60, color: '#27ae60' }} />
+                                    <Text style={{ fontSize: 16, color: '#1e272e', fontWeight: '500' }}>Sign Out</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>

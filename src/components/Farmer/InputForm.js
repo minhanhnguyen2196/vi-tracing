@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import Header from '../Header';
 
 const { width, height } = Dimensions.get('window');
-const logo  = require('../../assets/img/logo2.png')
+const logo = require('../../assets/img/logo2.png')
 class InputForm extends Component {
     constructor(props) {
         super(props);
@@ -18,16 +18,16 @@ class InputForm extends Component {
     }
 
     onButtonPress = () => {
-        const { packageDetail} = this.props;
+        const { packageDetail } = this.props;
         if (packageDetail.productType == "" || packageDetail.quantity == 0) {
             Alert.alert(
                 'Warning',
                 'Please fill all the required fields',
                 [
-                  {text: 'OK', onPress: () => console.log('OK Pressed')},
+                    { text: 'OK', onPress: () => console.log('OK Pressed') },
                 ],
                 { cancelable: true }
-              )
+            )
         } else {
             this.props.navigation.navigate('Submit')
         }
@@ -137,62 +137,28 @@ const styles = StyleSheet.create({
         borderWidth: 1
     },
     header: {
-        backgroundColor: '#27ae60', 
-        height: height * 0.08, 
-        alignItems: 'center', 
-        flexDirection: 'row', 
+        backgroundColor: '#27ae60',
+        height: height * 0.08,
+        alignItems: 'center',
+        flexDirection: 'row',
         justifyContent: 'center'
     },
     logoContainer: {
-        flex: 1, 
-        flexDirection: 'row', 
-        alignItems: 'center', 
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
         justifyContent: 'center'
     },
     label: {
-        color: '#2d3436', 
-        paddingVertical: 10, 
-        paddingLeft: 15, 
+        color: '#2d3436',
+        paddingVertical: 10,
+        paddingLeft: 15,
         fontSize: 15
     },
     btn: {
-        backgroundColor: '#27ae60', 
-        marginTop: 40, 
+        backgroundColor: '#27ae60',
+        marginTop: 40,
         marginHorizontal: 15
     }
 })
 
-{/* <Item fixedLabel style={{ marginBottom: 10 }}>
-    <Label style={{ flex: 2 }}>Package Date</Label>
-    <Input
-        style={{ flex: 3 }}
-        value={new Date().toDateString()}
-        editable={false} />
-</Item>
-    <Item fixedLabel style={{ marginBottom: 10 }}>
-        <Label style={{ flex: 2 }}>Product Type</Label>
-        <Input
-            style={{ flex: 3 }}
-            onChangeText={(text) => this.props.setProductType(text)}
-            blurOnSubmit={false}
-            onSubmitEditing={(event) => this.refs.quantity._root.focus()}
-            ref={(input) => this.name = input}
-        />
-    </Item>
-    <Item fixedLabel style={{ marginBottom: 10 }}>
-        <Label style={{ flex: 2 }}>Quantity</Label>
-        <Input
-            style={{ flex: 3 }}
-            onChangeText={(text) => this.props.setQuantity(text)}
-            keyboardType='numeric'
-            ref='quantity'
-            onSubmitEditing={(event) => this.refs.desc._root.focus()}
-        />
-    </Item>
-    <Item fixedLabel style={{ marginBottom: 10 }} last>
-        <Label style={{ flex: 2 }}>Description</Label>
-        <Input
-            style={{ flex: 3 }}
-            onChangeText={(text) => this.props.setDescription(text)}
-            ref='desc' />
-    </Item> */}
