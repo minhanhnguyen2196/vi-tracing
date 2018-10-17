@@ -7,7 +7,7 @@ import {
     KeyboardAvoidingView, 
     StyleSheet, 
     TextInput, 
-    DatePickerAndroid 
+    DatePickerAndroid, DatePickerIOS, Platform
 } from 'react-native';
 import { 
     Container, 
@@ -52,14 +52,16 @@ class VerifyForm extends Component {
 
 
     async pickDate() {
+        let datePicker = DatePickerAndroid;
+        if (Platform.OS === 'ios') datePicker = DatePickerIOS;
         try {
-            const { action, year, month, day } = await DatePickerAndroid.open({
+            const { action, year, month, day } = await datePicker.open({
                 // Use `new Date()` for current date.
                 // May 25 2020. Month 0 is January.
                 date: new Date(),
             });
 
-            if (action !== DatePickerAndroid.dismissedAction) {
+            if (action !== datePicker.dismissedAction) {
                 // Selected year, month (0-11), day
                 console.log(year, month, day)
                 this.setState({ expiredDate: moment(year + '-' + (month + 1) + '-' + day).format('ddd MMM DD YYYY') })

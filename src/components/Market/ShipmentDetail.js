@@ -81,7 +81,7 @@ class ShipmentDetail extends Component {
                                 <Text style={{ padding: 5, textDecorationLine: 'underline' }}>Farm</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                onPress={() => this.onVerifierButtonPress() }
+                                onPress={() => this.onVerifierButtonPress()}
                                 style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                                 <Icon name='users' type='FontAwesome' style={{ fontSize: 30, color: '#27ae60' }} />
                                 <Text style={{ padding: 5, textDecorationLine: 'underline' }} >Verifier</Text>
@@ -107,7 +107,6 @@ class ShipmentDetail extends Component {
                             options={{
                                 style: { paddingTop: 5 }
                             }}
-
                         />
 
                         <View style={{ flexDirection: 'row', padding: 10, }}>

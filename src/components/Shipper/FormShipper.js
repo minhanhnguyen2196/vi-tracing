@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Alert, BackHandler, TouchableOpacity, Keyboard, KeyboardAvoidingView, StyleSheet, TextInput, DatePickerAndroid } from 'react-native';
+import { View, Alert, Platform,  DatePickerIOS, BackHandler, TouchableOpacity, Keyboard, KeyboardAvoidingView, StyleSheet, TextInput, DatePickerAndroid } from 'react-native';
 import { Container, Content, Button, Icon, Item, Label, Input, Text, Form, ListItem, Left, Right, Body, Radio } from 'native-base';
 import { connect } from 'react-redux';
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -32,14 +32,16 @@ class FormShipper extends Component {
     }
 
     async pickDate() {
+        let datePicker = DatePickerAndroid;
+        if (Platform.OS === 'ios') datePicker = DatePickerIOS
         try {
-            const { action, year, month, day } = await DatePickerAndroid.open({
+            const { action, year, month, day } = await datePicker.open({
                 // Use `new Date()` for current date.
                 // May 25 2020. Month 0 is January.
                 date: new Date(),
             });
 
-            if (action !== DatePickerAndroid.dismissedAction) {
+            if (action !== datePicker.dismissedAction) {
                 // Selected year, month (0-11), day
                 console.log(year, month, day)
                 this.setState({ expiredDate: moment(year + '/' + (month + 1) + '/' + day).format('ddd MMM DD YYYY') })
