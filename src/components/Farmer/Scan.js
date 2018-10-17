@@ -24,13 +24,8 @@ class Scan extends Component {
         this.setState({ qrcode: e.data });
         Vibration.vibrate();
         this.setState({ scanning: false });
-        // const url = URI + '/Shipment';
-        // const data = { filter: '{"include":"resolve"}' };
-        // const params = Object.keys(data).map(key => key + '=' +
-        //     encodeURIComponent(data[key])).join('&');
-        // const fullUrl = url + `${params ? '?' + params : ''}`;
-
-        fetch('http://192.168.0.87:7777/api/qrcode/' + e.data, {
+        
+        fetch('http://118.70.170.165:7777/api/qrcode/' + e.data, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

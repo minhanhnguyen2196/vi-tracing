@@ -58,7 +58,7 @@ class Login extends Component {
             alert('Undefined username or password')
         } else {
             this.setState({ visible: true }, () => {
-                fetch('http://192.168.0.87:7777/api/userlogin/', {
+                fetch('http://118.70.170.165:7777/api/userlogin/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

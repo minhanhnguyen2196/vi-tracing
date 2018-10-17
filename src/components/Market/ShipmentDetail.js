@@ -113,11 +113,11 @@ class ShipmentDetail extends Component {
                         <View style={{ flexDirection: 'row', padding: 10, }}>
                             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                                 <Icon name='cubes' type='FontAwesome' style={{ color: '#27ae60' }} />
-                                <Text style={{ padding: 5 }}>3000 kilograms</Text>
+                                <Text style={{ padding: 5 }}>{shipment.quantity} kilograms</Text>
                             </View>
                             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                                 <Icon name='calendar' type='FontAwesome' style={{ color: '#27ae60' }} />
-                                <Text style={{ padding: 5 }}>Oct 14 2018</Text>
+                                <Text style={{ padding: 5 }}>moment(shipment.expiredDateTime).format('MMM DD')</Text>
                             </View>
                         </View>
                     </View>
