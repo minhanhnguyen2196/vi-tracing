@@ -60,7 +60,7 @@ class ShipmentDetail extends Component {
         const { navigation } = this.props;
         const shipment = navigation.getParam('shipment');
         if (shipment.verifier) {
-            this.props.navigation.navigate('VerifierOrg', { id: shipment.verifier.org.orgID })
+            this.props.navigation.navigate('VerifierOrg', { verifier: shipment.verifier })
         } else alert('The shipment has not been verified by any organization')
     }
 
@@ -68,7 +68,7 @@ class ShipmentDetail extends Component {
         const { navigation } = this.props;
         const shipment = navigation.getParam('shipment');
         if (shipment.shipper) {
-            this.props.navigation.navigate('ShipperOrg', { id: shipment.shipper.org.orgID })
+            this.props.navigation.navigate('ShipperOrg', { shipper: shipment.shipper })
         } else alert('The shipment has not been delivered by any organization')
     }
     render() {

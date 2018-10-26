@@ -88,15 +88,23 @@ class VerifyForm extends Component {
             )
         } else {
             let noteVerifier = userInfo.username + ": " + this.state.note;
+            let verifierNamespace = "resource:com.vsii.blockchain.vitracing.Verifier#"
+            let newVerifier =  verifierNamespace + userInfo.id;
+            let verifierArray = [];
+            if (shipment.verifier) {
+                verifierArray = shipment.verifier.map(verifier => { return verifierNamespace + verifier.personId})
+            }  
+            verifierArray.push(newVerifier);
             let verifiedShipment = {
                 "$class": "com.vsii.blockchain.vitracing.ShipmentVerified",
                 "status": status ? "VERIFIED" : "REJECTED",
                 "notesVerifier": shipment.notesVerifier ? shipment.notesVerifier + "_" + noteVerifier : noteVerifier,
                 "expiredDateTime": shipment.expiredDateTime ? shipment.expiredDateTime : this.state.expiredDate,
                 "shipment": "resource:com.vsii.blockchain.vitracing.Shipment#" + shipment.qrCode,
-                "verifier": "resource:com.vsii.blockchain.vitracing.Verifier#" + userInfo.id
+                "verifier": verifierArray
             }
             this.setState({ visible: true }, () => {
+                
                 fetchTimeout(10000,
                     fetch(URI + '/ShipmentVerified', {
                         method: 'POST',
@@ -109,8 +117,9 @@ class VerifyForm extends Component {
                         .then(res => res.json())
                         .then(resJson => {
                             console.log(resJson);
-                            this.setState({ visible: false, submitted: true });
+                            this.setState({ visible: false });
                             this.props.navigation.navigate('SubmitResult');
+                            
                         })
                         .catch(err => console.log(err))
                 ).catch(err => {

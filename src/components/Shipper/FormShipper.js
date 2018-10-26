@@ -46,12 +46,19 @@ class FormShipper extends Component {
             )
         } else {
             let noteShipper = userInfo.username + ': ' + this.state.note;
+            let shipperNamespace = "resource:com.vsii.blockchain.vitracing.Shipper#";
+            let newShipper =  shipperNamespace + userInfo.id;
+            let shipperArray = [];
+            if (shipment.shipper) {
+                shipperArray = shipment.shipper;
+            }  
+            shipperArray.push(newShipper);
             let shippedShipment = {
                 "$class": "com.vsii.blockchain.vitracing.ShipmentShipped",
                 "status": "SHIPPED",
                 "notesShipper": shipment.notesShipper ? shipment.notesShipper + "_" + noteShipper : noteShipper,
                 "shipment": "resource:com.vsii.blockchain.vitracing.Shipment#" + shipment.qrCode,
-                "shipper": "resource:com.vsii.blockchain.vitracing.Shipper#" + userInfo.id
+                "shipper": shipperArray
             }
             this.setState({ visible: true }, () => {
                 fetchTimeout(10000, 

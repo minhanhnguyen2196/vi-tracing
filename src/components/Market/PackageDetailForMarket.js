@@ -23,7 +23,10 @@ class PackageDetailForMarket extends Component {
     }
 
     render() {
+        
         const { shipment } = this.props;
+        let verifierOrg = shipment.verifier.map(verifier => { return verifier.org.name}).join(", ");
+        let shipperOrg = shipment.shipper.map(shipper => { return shipper.org.name}).join(", ");
         return (
             <Container>
                 <Content padder>
@@ -99,7 +102,7 @@ class PackageDetailForMarket extends Component {
                                 Verifier Org
                             </Text>
                             <Right style={{ flex: 2 }}>
-                                <Text style={{ fontWeight: '500' }}>{shipment.verifier ? shipment.verifier.org.name : 'Undefined'}</Text>
+                                <Text style={{ fontWeight: '500' }}>{shipment.verifier ? verifierOrg : 'Undefined'}</Text>
                             </Right>
                         </CardItem>
                         <CardItem>
@@ -107,7 +110,7 @@ class PackageDetailForMarket extends Component {
                                 Shipper Org
                             </Text>
                             <Right style={{ flex: 2 }}>
-                                <Text style={{ fontWeight: '500' }}>{shipment.shipper ? shipment.shipper.org.name : 'Undefined'}</Text>
+                                <Text style={{ fontWeight: '500' }}>{shipment.shipper ? shipperOrg : 'Undefined'}</Text>
                             </Right>
                         </CardItem>
                     </Card>

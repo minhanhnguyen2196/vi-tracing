@@ -75,22 +75,22 @@ class Scan extends Component {
                 .catch(err => {
                     console.log(err)
                     Alert.alert(
-                        'Connection error',
-                        'Please check your internet connection',
+                        'Scan error',
+                        'Please check your connection',
                         [
                             { text: 'Try again', onPress: () => this.setState({ scanning: true }) },
                         ],
-                        { cancelable: true }
+                        { cancelable: false }
                     );
                 })
         ).catch(err => {
             Alert.alert(
                 'Request timeout',
-                'Please check your internet connection',
+                'Please check your connection',
                 [
                     { text: 'Try again', onPress: () => this.setState({ scanning: true }) },
                 ],
-                { cancelable: true }
+                { cancelable: false }
             );
         })
     }

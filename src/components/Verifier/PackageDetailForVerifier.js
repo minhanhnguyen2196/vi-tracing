@@ -74,7 +74,7 @@ class PackageDetailForVerifier extends Component {
                                 Package ID
                                 </Text>
                             <Right style={{ flex: 1 }}>
-                                <Text style={{ fontWeight: '400' }}>{shipment.qrCode}</Text>
+                                <Text style={{ fontWeight: '500' }}>{shipment.qrCode}</Text>
                             </Right>
                         </CardItem>
                         <CardItem bordered>
@@ -82,7 +82,7 @@ class PackageDetailForVerifier extends Component {
                                 Quantity
                                 </Text>
                             <Right style={{ flex: 2 }}>
-                                <Text style={{ fontWeight: '400' }}>{shipment.quantity} kilograms</Text>
+                                <Text style={{ fontWeight: '500' }}>{shipment.quantity} kilograms</Text>
                             </Right>
                         </CardItem>
                         <CardItem bordered>
@@ -90,7 +90,7 @@ class PackageDetailForVerifier extends Component {
                                 Packaged Date
                                 </Text>
                             <Right style={{ flex: 2 }}>
-                                <Text style={{ fontWeight: '400' }}>{moment(shipment.packedDateTime).format('MMM DD YYYY')}</Text>
+                                <Text style={{ fontWeight: '500' }}>{moment(shipment.packedDateTime).format('MMM DD YYYY')}</Text>
                             </Right>
                         </CardItem>
                         <CardItem>

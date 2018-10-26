@@ -35,12 +35,20 @@ class VerifyFormMarket extends Component {
             )
         } else {
             let noteRetailer = userInfo.username + ": " + this.state.note;
+            let retailerNamespace = "resource:com.vsii.blockchain.vitracing.Retailer#"
+            let newRetailer =  retailerNamespace + userInfo.id;
+            let retailerArray = [];
+            if (shipment.retailer) {
+                retailerArray = shipment.retailer.map(retailer => { return retailerNamespace + retailer.personId})
+            }  
+            retailerArray.push(newRetailer);
+
             let receivedShipment = {
                 "$class": "com.vsii.blockchain.vitracing.ShipmentReceived",
                 "status": status ? "RECEIVED" : "REJECTED",
                 "notesRetailer": shipment.notesRetailer ? shipment.notesRetailer + "_" + noteRetailer : noteRetailer,
                 "shipment": "resource:com.vsii.blockchain.vitracing.Shipment#" + shipment.qrCode,
-                "retailer": "resource:com.vsii.blockchain.vitracing.Retailer#" + userInfo.id
+                "retailer": retailerArray
             }
             this.setState({ visible: true }, () => {
                 fetchTimeout(10000, 

@@ -41,7 +41,7 @@ class VerifyScan extends Component {
             encodeURIComponent(data[key])).join('&');
         const fullUrl = url + `${params ? '?' + params : ''}`;
 
-        fetchTimeout(20000, 
+        fetchTimeout(20000,
             fetch(fullUrl, {
                 method: 'GET',
                 headers: {
@@ -52,7 +52,6 @@ class VerifyScan extends Component {
                 .then(resJson => {
                     if (resJson.error) {
                         this.props.navigation.navigate('ScanResult', { result: 'denied' });
-                        return Promise.reject(new Error('Fail!'));
                     } else {
                         this.props.getShipment(resJson);
                         this.props.navigation.navigate('PackageDetailForVerifier');
@@ -61,7 +60,7 @@ class VerifyScan extends Component {
                 .catch(err => {
                     console.log(err)
                     Alert.alert(
-                        'Connection Error',
+                        'Connection error',
                         'Please check your internet connection',
                         [
                             { text: 'Try again', onPress: () => this.setState({ scanning: true }) },
@@ -91,32 +90,32 @@ class VerifyScan extends Component {
                 <View style={styles.container}>
                     {
                         scanning ?
-                        <RNCamera
-                            ref={ref => {
-                                this.camera = ref;
-                            }}
-                            style={styles.preview}
-                            type={RNCamera.Constants.Type.back}
-                            flashMode={RNCamera.Constants.FlashMode.on}
-                            permissionDialogTitle={'Permission to use camera'}
-                            permissionDialogMessage={'We need your permission to use your camera phone'}
-                            onBarCodeRead={this.onBarCodeRead}
-                        >
-                            <View style={styles.rectangle}>
-                                <View style={styles.rectangleColor} />
-                                <View style={styles.topLeft} />
-                                <View style={styles.topRight} />
-                                <View style={styles.bottomLeft} />
-                                <View style={styles.bottomRight} />
+                            <RNCamera
+                                ref={ref => {
+                                    this.camera = ref;
+                                }}
+                                style={styles.preview}
+                                type={RNCamera.Constants.Type.back}
+                                flashMode={RNCamera.Constants.FlashMode.on}
+                                permissionDialogTitle={'Permission to use camera'}
+                                permissionDialogMessage={'We need your permission to use your camera phone'}
+                                onBarCodeRead={this.onBarCodeRead}
+                            >
+                                <View style={styles.rectangle}>
+                                    <View style={styles.rectangleColor} />
+                                    <View style={styles.topLeft} />
+                                    <View style={styles.topRight} />
+                                    <View style={styles.bottomLeft} />
+                                    <View style={styles.bottomRight} />
+                                </View>
+                                <View style={{ position: 'absolute', bottom: 20, justifyContent: 'center', flex: 1, zIndex: 100 }}>
+                                    <Text style={{ color: 'white', alignSelf: 'center' }}>Place the QR Code inside the area to Scan it</Text>
+                                </View>
+                            </RNCamera>
+                            :
+                            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                <ActivityIndicator size='large' color='green' animating />
                             </View>
-                            <View style={{ position: 'absolute', bottom: 20, justifyContent: 'center', flex: 1, zIndex: 100 }}>
-                                <Text style={{ color: 'white', alignSelf: 'center' }}>Place the QR Code inside the area to Scan it</Text>
-                            </View>
-                        </RNCamera>
-                        : 
-                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                            <ActivityIndicator  size='large' color='green' animating/>
-                        </View>
                     }
                 </View>
             </View>
