@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { View, Image, TouchableOpacity, Linking, Vibration, Alert, StyleSheet, Dimensions, BackHandler } from 'react-native';
+import { View, Image, ActivityIndicator, Linking, Vibration, Alert, StyleSheet, Dimensions, BackHandler } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import { Button, Icon, Text } from 'native-base';
-import { setQRCode } from '../../redux/actionCreator';
+import { setQRCode, getShipment } from '../../redux/actionCreator';
 import { connect } from 'react-redux';
 import Header from '../Header';
-
-import { URI } from '.././../utils/config';
+import { URI1, URI } from '.././../utils/config';
+import { fetchTimeout } from '../../utils/fetchTimeout';
 const logo = require('../../assets/img/logo2.png')
 const deviceHeight = Dimensions.get("window").height;
 const deviceWidth = Dimensions.get("window").width;
@@ -17,44 +17,92 @@ class Scan extends Component {
         this.state = {
             scanning: true,
             qrcode: '',
+
         };
     }
 
-    onBarCodeRead = (e) => {
-        this.setState({ qrcode: e.data });
-        Vibration.vibrate();
-        this.setState({ scanning: false });
-        
-        fetch('http://118.70.170.165:7777/api/qrcode/' + e.data, {
+    getShipment = (e) => {
+        const url = URI + '/Shipment/' + e.data;
+        const data = { filter: '{"include":"resolve"}' };
+        const params = Object.keys(data).map(key => key + '=' +
+            encodeURIComponent(data[key])).join('&');
+        const fullUrl = url + `${params ? '?' + params : ''}`;
+        fetch(fullUrl, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
             }
         })
-            .then(res => {
-                if (res.status !== 404) {
-                    return res.json();
-                } else {
-                    this.props.navigation.navigate('ScanResult', { result: 'denied' });
-                    return Promise.reject(new Error('Fail!'));
-                }
-            })
+            .then(res => res.json())
             .then(resJson => {
-                if (resJson.createdBy === this.props.userInfo.id) {
-                    this.props.setQRCode(e.data);
-                    this.props.navigation.navigate('ScanResult', { result: 'success' });
+                if (resJson.error) {
+                    this.props.navigation.navigate('ScanResult', { result: 'success', submitted: false });
                 } else {
-                    this.props.navigation.navigate('ScanResult', { result: 'denied' });
+                    this.props.getShipment(resJson);
+                    this.props.navigation.navigate('ScanResult', { result: 'success', submitted: true });
                 }
             })
             .catch(err => console.log(err))
     }
+
+    onBarCodeRead = (e) => {
+        Vibration.vibrate();
+        this.setState({ scanning: false });
+
+        fetchTimeout(20000,
+            fetch(URI1 + '/qrcode/' + e.data, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+                .then(res => {
+                    if (res.status !== 404) {
+                        return res.json();
+                    } else {
+                        this.props.navigation.navigate('ScanResult', { result: 'denied' });
+                        return Promise.reject(new Error());
+                    }
+                })
+                .then(resJson => {
+                    if (resJson.participantId === this.props.userInfo.participantId) {
+                        this.props.setQRCode(e.data);
+                        this.getShipment(e);
+                    } else {
+                        this.props.navigation.navigate('ScanResult', { result: 'denied' });
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                    Alert.alert(
+                        'Connection error',
+                        'Please check your internet connection',
+                        [
+                            { text: 'Try again', onPress: () => this.setState({ scanning: true }) },
+                        ],
+                        { cancelable: true }
+                    );
+                })
+        ).catch(err => {
+            Alert.alert(
+                'Request timeout',
+                'Please check your internet connection',
+                [
+                    { text: 'Try again', onPress: () => this.setState({ scanning: true }) },
+                ],
+                { cancelable: true }
+            );
+        })
+    }
+
     componentDidMount() {
         BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
     }
+
     componentWillUnmount() {
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
     }
+
     handleBackPress = () => {
         this.props.navigation.goBack();
         return true;
@@ -67,32 +115,37 @@ class Scan extends Component {
                 <Header icon={true} navigation={this.props.navigation} />
                 <View style={styles.container}>
                     {
-                        scanning &&
-                        <RNCamera
-                            ref={ref => {
-                                this.camera = ref;
-                            }}
-                            style={styles.preview}
-                            type={RNCamera.Constants.Type.back}
-                            flashMode={RNCamera.Constants.FlashMode.on}
-                            permissionDialogTitle={'Permission to use camera'}
-                            permissionDialogMessage={'We need your permission to use your camera phone'}
-                            onBarCodeRead={this.onBarCodeRead}
-                            barCodeTypes={[RNCamera.Constants.BarCodeType.qr]}
-                        >
+                        scanning ?
+                            <RNCamera
+                                ref={ref => {
+                                    this.camera = ref;
+                                }}
+                                style={styles.preview}
+                                type={RNCamera.Constants.Type.back}
+                                flashMode={RNCamera.Constants.FlashMode.on}
+                                permissionDialogTitle={'Permission to use camera'}
+                                permissionDialogMessage={'We need your permission to use your camera phone'}
+                                onBarCodeRead={this.onBarCodeRead}
+                                barCodeTypes={[RNCamera.Constants.BarCodeType.qr]}
+                            >
 
-                            <View style={styles.rectangle}>
-                                <View style={styles.rectangleColor} />
-                                <View style={styles.topLeft} />
-                                <View style={styles.topRight} />
-                                <View style={styles.bottomLeft} />
-                                <View style={styles.bottomRight} />
+                                <View style={styles.rectangle}>
+                                    <View style={styles.rectangleColor} />
+                                    <View style={styles.topLeft} />
+                                    <View style={styles.topRight} />
+                                    <View style={styles.bottomLeft} />
+                                    <View style={styles.bottomRight} />
+                                </View>
+                                <View style={{ position: 'absolute', bottom: 20, justifyContent: 'center', flex: 1 }}>
+                                    <Text style={{ color: 'white', alignSelf: 'center' }}>Place the QR Code inside the area to Scan it</Text>
+                                </View>
+                            </RNCamera>
+                            :
+                            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                <ActivityIndicator size='large' color='green' animating />
                             </View>
-                            <View style={{ position: 'absolute', bottom: 20, justifyContent: 'center', flex: 1 }}>
-                                <Text style={{ color: 'white', alignSelf: 'center' }}>Place the QR Code inside the area to Scan it</Text>
-                            </View>
-                        </RNCamera>
                     }
+
                 </View>
             </View>
         );
@@ -205,15 +258,4 @@ function mapStateToProps(state) {
     };
 }
 
-export default connect(mapStateToProps, { setQRCode })(Scan);
-
-
-{/* <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
-                            <TouchableOpacity
-                                onPress={() => this.setState({ scanning: true })}
-                                style={styles.scanButton}>
-                                <Icon name='qrcode' type='FontAwesome' style={{ color: 'white', fontSize: 60 }} />
-                                <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16, padding: 5 }}>SCAN</Text>
-                            </TouchableOpacity>
-                            <Text style={styles.scanText}>Find the QR code and move the camera to scan</Text>
-                        </View> */}
+export default connect(mapStateToProps, { setQRCode, getShipment })(Scan);

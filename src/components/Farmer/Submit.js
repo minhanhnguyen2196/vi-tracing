@@ -3,12 +3,10 @@ import { View, Image, TouchableOpacity } from 'react-native';
 import {
     Container,
     Content,
-    Icon,
     Button,
     Text,
     Card,
     CardItem,
-    Thumbnail,
     Left,
     Right,
     Body
@@ -17,7 +15,8 @@ import Header from '../Header';
 import { connect } from 'react-redux';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { URI } from '../../utils/config';
-const logo = require('../../assets/img/logo2.png')
+import { fetchTimeout } from '../../utils/fetchTimeout';
+const apple = require('../../assets/img/apple1.jpg')
 class Submit extends Component {
     constructor(props) {
         super(props);
@@ -32,32 +31,55 @@ class Submit extends Component {
         let packedShipment = {
             "$class": "com.vsii.blockchain.vitracing.ShipmentPacked",
             "productName": packageDetail.productName,
-            "note": packageDetail.descr,
+            "notesFarmer": userInfo.username + ": " + packageDetail.descr,
             "quantity": packageDetail.quantity,
             "qrCode": packageDetail.qrCode,
-            "farmerId": userInfo.id
+            "farmerId": userInfo.id,
+            "status": "PACKED"
         }
+
         this.setState({ visible: true }, () => {
-            return fetch(URI + '/ShipmentPacked', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Accept: 'application/json',
-                },
-                body: JSON.stringify(packedShipment)
-            })
-                .then(res => res.json())
-                .then(resJson => {
-                    console.log(resJson);
-                    this.setState({ visible: false, submitted: true });
-                    this.props.navigation.navigate('SubmitResult');
+            fetchTimeout(10000,
+                fetch(URI + '/ShipmentPacked', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                    },
+                    body: JSON.stringify(packedShipment)
                 })
-                .catch(err => console.log(err))
+                    .then(res => res.json())
+                    .then(resJson => {
+                        console.log(resJson);
+                        this.setState({ visible: false, submitted: true });
+                        this.props.navigation.navigate('SubmitResult');
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        Alert.alert(
+                            'Submit Failed',
+                            'Connection error',
+                            [
+                                { text: 'Try Again', onPress: () => this.setState({ visible: false }) },
+                            ],
+                            { cancelable: true }
+                        );
+                    })
+            ).catch(err => {
+                Alert.alert(
+                    'Submit Failed',
+                    'Request timeout',
+                    [
+                        { text: 'Try Again', onPress: () => this.setState({ visible: false }) },
+                    ],
+                    { cancelable: true }
+                );
+            })
         })
     }
 
     render() {
-        const { packageDetail, shipment } = this.props;
+        const { packageDetail } = this.props;
         return (
             <Container style={{ backgroundColor: '#F1F3F4' }} >
                 <Header icon={true} navigation={this.props.navigation} />
@@ -90,7 +112,7 @@ class Submit extends Component {
                             </CardItem>
                             <CardItem>
                                 <Body>
-                                    <Image source={{ uri: 'https://media.istockphoto.com/photos/granny-smith-apple-background-picture-id478157670?k=6&m=478157670&s=612x612&w=0&h=-i0PhrDggWPvhh4KbH7ge17s-YPQSo4-vwqD_xV-etg=' }} style={{ height: 200, width: '100%', flex: 1 }} />
+                                    <Image source={apple} style={{ height: 200, width: '100%', flex: 1 }} />
                                 </Body>
                             </CardItem>
                             <CardItem>

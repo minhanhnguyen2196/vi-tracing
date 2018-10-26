@@ -5,8 +5,9 @@ import * as Animatable from 'react-native-animatable';
 import { connect } from 'react-redux';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { getUserInfo } from '../../redux/actionCreator';
+import { fetchTimeout } from '../../utils/fetchTimeout';
 var md5 = require('md5');
-
+import { URI1 } from '../../utils/config';
 
 class Login extends Component {
     constructor(props) {
@@ -55,38 +56,48 @@ class Login extends Component {
             password: md5(password)
         }
         if (username === '' || password === '') {
-            alert('Undefined username or password')
+            alert('Missing username or password')
         } else {
             this.setState({ visible: true }, () => {
-                fetch('http://118.70.170.165:7777/api/userlogin/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(userAccount)
-                })
-                    .then((res) => {
-                        console.log(res.status);
-                        if (res.status == 404) {
+                fetchTimeout(10000,
+                    fetch(URI1 + '/userlogin/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(userAccount)
+                    })
+                        .then((res) => {
+                            return res.json();
+                        })
+                        .then(resJson => {
+                            this.setState({ visible: false });
+                            this.props.getUserInfo(resJson);
+                            this.props.navigation.navigate('Home');
+                        })
+                        .catch(err => {
+                            console.log(err);
                             Alert.alert(
                                 'Login Failed',
-                                'Incorrect Username or Password',
+                                'Incorrect username or password',
                                 [
-                                    { text: 'Try Again', onPress: () => this.setState({ visible: false}) },
+                                    { text: 'Try Again', onPress: () => this.setState({ visible: false }) },
                                 ],
-                                { cancelable: true }
+                                { cancelable: false }
                             );
-                            return Promise.reject(new Error());
-                        } else {
-                            return res.json();
-                        }
+                        })
+                )
+                    .catch(err => {
+                        console.log(err);
+                        Alert.alert(
+                            'Login Failed',
+                            'Request timeout',
+                            [
+                                { text: 'Try Again', onPress: () => this.setState({ visible: false }) },
+                            ],
+                            { cancelable: true }
+                        );
                     })
-                    .then(resJson => {
-                        this.setState({ visible: false });
-                        this.props.getUserInfo(resJson);
-                        this.props.navigation.navigate('Home');
-                    })
-                    .catch(err => console.log(err))
             })
         }
     }

@@ -12,7 +12,7 @@ const verify = require('../assets/img/verifier.jpg');
 const market = require('../assets/img/market.jpg')
 
 const { width, height } = Dimensions.get('window');
-class First extends Component {
+class StartScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {};
@@ -47,16 +47,16 @@ class First extends Component {
                 <View style={{ flex: 1 }}>
                     <Swiper style={styles.wrapper} paginationStyle={{ bottom: -30 }} >
                         <View style={styles.slide}>
-                            <Image source={farmer} style={{ width, height: height * 0.5 }} />
+                            <Image resizeMode='cover' source={farmer} style={{ width, height: height * 0.5 }} />
                         </View>
                         <View style={styles.slide}>
-                            <Image source={verify} style={{ width, height: height * 0.5 }} />
+                            <Image  resizeMode='contain' source={verify} style={{ width, height: height * 0.5 }} />
                         </View>
                         <View style={styles.slide}>
-                            <Image source={ship} style={{ width, height: height * 0.5 }} />
+                            <Image resizeMode='cover' source={ship} style={{ width, height: height * 0.5 }} />
                         </View>
                         <View style={styles.slide}>
-                            <Image source={market} style={{ width, height: height * 0.5 }} />
+                            <Image  resizeMode='cover' source={market} style={{ width, height: height * 0.5 }} />
                         </View>
                     </Swiper>
                 </View>
@@ -72,7 +72,7 @@ class First extends Component {
     }
 }
 
-export default First;
+export default StartScreen;
 
 const styles = StyleSheet.create({
     slide: {

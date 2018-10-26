@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { View, Image, TouchableOpacity, BackHandler } from 'react-native';
-import { Container, Content, Button, Icon, Text } from 'native-base';
+import { Container, Content, Button, Icon, Text, Card, CardItem, Right, Left, Body } from 'native-base';
 import { connect } from 'react-redux';
 
 var moment = require('moment');
+const apple = require('../../assets/img/apple.png');
 
 class PackageDetailForMarket extends Component {
     constructor(props) {
@@ -20,21 +21,28 @@ class PackageDetailForMarket extends Component {
         this.props.navigation.navigate('Home');
         return true;
     }
-    
+
     render() {
         const { shipment } = this.props;
         return (
             <Container>
-                <Button
-                    transparent
-                    onPress={() => this.props.navigation.navigate('Home')}
-                >
-                    <Icon name='arrow-back' style={{ fontSize: 32, color: '#27ae60' }} />
-                </Button>
                 <Content padder>
-                    <Text style={{ alignSelf: 'center', fontSize: 16, paddingVertical: 20, fontWeight: 'bold', color: '#27ae60' }}>Scan Successfull!</Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <Left style={{ flex: 1 }}>
+                            <Button
+                                transparent
+                                onPress={() => this.props.navigation.navigate('Home')}
+                            >
+                                <Icon name='arrow-back' style={{ fontSize: 32, color: '#27ae60' }} />
+                            </Button>
+                        </Left>
+                        <Body style={{ flex: 2 }}>
+                            <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#27ae60' }}>Scan Successful !</Text>
+                        </Body>
+                        <Right style={{ flex: 1 }} />
+                    </View>
                     <View style={{ justifyContent: 'center', alignItems: 'center', paddingTop: 10 }}>
-                        <Image source={{ uri: 'https://www.yatescidermill.com/wp-content/uploads/2016/08/granny-smith.png' }}
+                        <Image source={apple}
                             style={{ width: 100, height: 100, borderRadius: 50 }} />
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Icon name='check-circle' type='FontAwesome' style={{ color: '#27ae60' }} />
@@ -45,36 +53,65 @@ class PackageDetailForMarket extends Component {
                             <Text style={{ padding: 5, fontSize: 15 }}>{shipment.farmer.org.name}</Text>
                         </View>
                     </View>
-                    <View style={{ flexDirection: 'row', paddingTop: 30 }}>
-                        <View style={{ flex: 1, borderRightWidth: 1, borderColor: '#dfe6e9', marginLeft: 10 }}>
-                            <View style={{ paddingBottom: 20, borderBottomColor: '#dfe6e9', borderBottomWidth: 0.5 }}>
-                                <Text style={{ fontSize: 14, color: '#555D65', paddingBottom: 5, }}>Package ID</Text>
-                                <Text style={{ fontSize: 16, color: '#1e272e', fontWeight: '500' }}>#{shipment.qrCode}</Text>
-                            </View>
-                            <View style={{ paddingBottom: 20, borderBottomColor: '#dfe6e9', borderBottomWidth: 0.5, paddingTop: 10 }}>
-                                <Text style={{ fontSize: 14, color: '#555D65', paddingBottom: 5, }}>Packaged Date</Text>
-                                <Text style={{ fontSize: 16, color: '#1e272e', fontWeight: '500' }}>{moment(shipment.packedDateTime).format('MMM DD YYYY')}</Text>
-                            </View>
-                            <View style={{ paddingTop: 10 }}>
-                                <Text style={{ fontSize: 14, color: '#555D65', paddingBottom: 5, }}>Verified Date</Text>
-                                <Text style={{ fontSize: 16, color: '#1e272e', fontWeight: '500' }}>{shipment.verifiedDateTime ?  moment(shipment.verifiedDateTime).format('MMM DD YYYY') : 'Not verified'}</Text>
-                            </View>
-                        </View>
-                        <View style={{ flex: 1, marginRight: 20, paddingBottom: 20 }}>
-                            <View style={{ paddingLeft: 20, paddingBottom: 20, borderBottomColor: '#dfe6e9', borderBottomWidth: 0.5 }}>
-                                <Text style={{ fontSize: 14, color: '#555D65', paddingBottom: 5 }}>Quantity</Text>
-                                <Text style={{ fontSize: 16, color: '#1e272e', fontWeight: '500' }}>{shipment.quantity} kilograms</Text>
-                            </View>
-                            <View style={{ paddingLeft: 20, paddingBottom: 20, borderBottomColor: '#dfe6e9', borderBottomWidth: 0.5, paddingTop: 10 }}>
-                                <Text style={{ fontSize: 14, color: '#555D65', paddingBottom: 5 }}>Verifier</Text>
-                                <Text style={{ fontSize: 16, color: '#1e272e', fontWeight: '500' }}>{shipment.verifier ? shipment.verifier.org.name : 'Undefined'}</Text>
-                            </View>
-                            <View style={{ paddingLeft: 20, paddingTop: 10 }}>
-                                <Text style={{ fontSize: 14, color: '#555D65', paddingBottom: 5 }}>Shipper</Text>
-                                <Text style={{ fontSize: 16, color: '#1e272e', fontWeight: '500' }}>{shipment.shipper ? shipment.shipper.org.name : 'Undefined'}</Text>
-                            </View>
-                        </View>
-                    </View>
+                    <Card transparent>
+                        <CardItem bordered>
+                            <Text style={{ flex: 1 }}>
+                                Package ID
+                                </Text>
+                            <Right style={{ flex: 1 }}>
+                                <Text style={{ fontWeight: '500' }}>{shipment.qrCode}</Text>
+                            </Right>
+                        </CardItem>
+                        <CardItem bordered>
+                            <Text style={{ flex: 3, }}>
+                                Quantity
+                                </Text>
+                            <Right style={{ flex: 2 }}>
+                                <Text style={{ fontWeight: '500' }}>{shipment.quantity} kilograms</Text>
+                            </Right>
+                        </CardItem>
+                        <CardItem bordered>
+                            <Text style={{ flex: 3, }}>
+                                Packaged Date
+                                </Text>
+                            <Right style={{ flex: 2 }}>
+                                <Text style={{ fontWeight: '500' }}>{moment(shipment.packedDateTime).format('MMM DD YYYY')}</Text>
+                            </Right>
+                        </CardItem>
+                        <CardItem bordered>
+                            <Text style={{ flex: 3, }}>
+                                Verified Date
+                            </Text>
+                            <Right style={{ flex: 2 }}>
+                                <Text style={{ fontWeight: '500' }}>{moment(shipment.verifiedDateTime).format('MMM DD YYYY')}</Text>
+                            </Right>
+                        </CardItem>
+                        <CardItem bordered>
+                            <Text style={{ flex: 3, }}>
+                                Farmer Org
+                            </Text>
+                            <Right style={{ flex: 2 }}>
+                                <Text style={{ fontWeight: '500' }}>{shipment.farmer ? shipment.farmer.org.name : 'Undefined'}</Text>
+                            </Right>
+                        </CardItem>
+                        <CardItem bordered>
+                            <Text style={{ flex: 3, }}>
+                                Verifier Org
+                            </Text>
+                            <Right style={{ flex: 2 }}>
+                                <Text style={{ fontWeight: '500' }}>{shipment.verifier ? shipment.verifier.org.name : 'Undefined'}</Text>
+                            </Right>
+                        </CardItem>
+                        <CardItem>
+                            <Text style={{ flex: 3, }}>
+                                Shipper Org
+                            </Text>
+                            <Right style={{ flex: 2 }}>
+                                <Text style={{ fontWeight: '500' }}>{shipment.shipper ? shipment.shipper.org.name : 'Undefined'}</Text>
+                            </Right>
+                        </CardItem>
+                    </Card>
+
                     <View style={{ flex: 1 }}>
                         <Button
                             onPress={() => this.props.navigation.navigate('VerifyFormMarket')}
@@ -97,3 +134,35 @@ function mapStateToProps(state) {
 }
 
 export default connect(mapStateToProps)(PackageDetailForMarket);
+
+
+{/* <View style={{ flexDirection: 'row', paddingTop: 30 }}>
+    <View style={{ flex: 1, borderRightWidth: 1, borderColor: '#dfe6e9', marginLeft: 10 }}>
+        <View style={{ paddingBottom: 20, borderBottomColor: '#dfe6e9', borderBottomWidth: 0.5 }}>
+            <Text style={{ fontSize: 14, color: '#555D65', paddingBottom: 5, }}>Package ID</Text>
+            <Text style={{ fontSize: 16, color: '#1e272e', fontWeight: '500' }}>#{shipment.qrCode}</Text>
+        </View>
+        <View style={{ paddingBottom: 20, borderBottomColor: '#dfe6e9', borderBottomWidth: 0.5, paddingTop: 10 }}>
+            <Text style={{ fontSize: 14, color: '#555D65', paddingBottom: 5, }}>Packaged Date</Text>
+            <Text style={{ fontSize: 16, color: '#1e272e', fontWeight: '500' }}>{moment(shipment.packedDateTime).format('MMM DD YYYY')}</Text>
+        </View>
+        <View style={{ paddingTop: 10 }}>
+            <Text style={{ fontSize: 14, color: '#555D65', paddingBottom: 5, }}>Verified Date</Text>
+            <Text style={{ fontSize: 16, color: '#1e272e', fontWeight: '500' }}>{shipment.verifiedDateTime ? moment(shipment.verifiedDateTime).format('MMM DD YYYY') : 'Not verified'}</Text>
+        </View>
+    </View>
+    <View style={{ flex: 1, marginRight: 20, paddingBottom: 20 }}>
+        <View style={{ paddingLeft: 20, paddingBottom: 20, borderBottomColor: '#dfe6e9', borderBottomWidth: 0.5 }}>
+            <Text style={{ fontSize: 14, color: '#555D65', paddingBottom: 5 }}>Quantity</Text>
+            <Text style={{ fontSize: 16, color: '#1e272e', fontWeight: '500' }}>{shipment.quantity} kilograms</Text>
+        </View>
+        <View style={{ paddingLeft: 20, paddingBottom: 20, borderBottomColor: '#dfe6e9', borderBottomWidth: 0.5, paddingTop: 10 }}>
+            <Text style={{ fontSize: 14, color: '#555D65', paddingBottom: 5 }}>Verifier</Text>
+            <Text style={{ fontSize: 16, color: '#1e272e', fontWeight: '500' }}>{shipment.verifier ? shipment.verifier.org.name : 'Undefined'}</Text>
+        </View>
+        <View style={{ paddingLeft: 20, paddingTop: 10 }}>
+            <Text style={{ fontSize: 14, color: '#555D65', paddingBottom: 5 }}>Shipper</Text>
+            <Text style={{ fontSize: 16, color: '#1e272e', fontWeight: '500' }}>{shipment.shipper ? shipment.shipper.org.name : 'Undefined'}</Text>
+        </View>
+    </View>
+</View> */}

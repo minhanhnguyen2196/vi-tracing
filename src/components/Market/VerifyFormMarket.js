@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
-import { View, Alert, Image, TouchableOpacity, TextInput, KeyboardAvoidingView, StyleSheet } from 'react-native';
+import { View, Alert, Image, BackHandler, TextInput, KeyboardAvoidingView, StyleSheet } from 'react-native';
 import { Container, Content, Button, Icon, Item, Label, Left, Right, Body, Input, Text, Radio, ListItem, Form } from 'native-base';
 import { URI } from '../../utils/config';
+import { fetchTimeout } from '../../utils/fetchTimeout';
 import { connect } from 'react-redux';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Header from '../Header';
+var moment = require('moment');
 
 const logo = require('../../assets/img/logo2.png')
 class VerifyFormMarket extends Component {
@@ -20,8 +22,9 @@ class VerifyFormMarket extends Component {
     }
 
     shipmentReceived = () => {
+        const { status, note } = this.state;
         const { shipment, userInfo } = this.props;
-        if (this.state.note == '') {
+        if (note == '') {
             Alert.alert(
                 'Warning',
                 'Please fill all the required fields',
@@ -31,71 +34,69 @@ class VerifyFormMarket extends Component {
                 { cancelable: true }
             )
         } else {
+            let noteRetailer = userInfo.username + ": " + this.state.note;
             let receivedShipment = {
                 "$class": "com.vsii.blockchain.vitracing.ShipmentReceived",
-                "note": shipment.notes + "_" + this.state.note,
+                "status": status ? "RECEIVED" : "REJECTED",
+                "notesRetailer": shipment.notesRetailer ? shipment.notesRetailer + "_" + noteRetailer : noteRetailer,
                 "shipment": "resource:com.vsii.blockchain.vitracing.Shipment#" + shipment.qrCode,
                 "retailer": "resource:com.vsii.blockchain.vitracing.Retailer#" + userInfo.id
             }
             this.setState({ visible: true }, () => {
-                return fetch(URI + '/ShipmentReceived', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Accept: 'application/json',
-                    },
-                    body: JSON.stringify(receivedShipment)
-                })
-                    .then(res => res.json())
-                    .then(resJson => {
-                        console.log(resJson);
-                        this.setState({ visible: false, submitted: true })
-                        this.props.navigation.navigate('SubmitResult');
+                fetchTimeout(10000, 
+                    fetch(URI + '/ShipmentReceived', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Accept: 'application/json',
+                        },
+                        body: JSON.stringify(receivedShipment)
                     })
-                    .catch(err => console.log(err))
+                        .then(res => res.json())
+                        .then(resJson => {
+                            console.log(resJson);
+                            this.setState({ visible: false, submitted: true })
+                            this.props.navigation.navigate('SubmitResult');
+                        })
+                        .catch(err => {
+                            console.log(err);
+                            Alert.alert(
+                                'Submit Failed',
+                                'Connection Error',
+                                [
+                                    { text: 'Try Again', onPress: () => this.setState({ visible: false }) },
+                                ],
+                                { cancelable: true }
+                            );
+                        })
+                ).catch(err => {
+                    Alert.alert(
+                        'Submit Failed',
+                        'Request timeout',
+                        [
+                            { text: 'Try Again', onPress: () => this.setState({ visible: false }) },
+                        ],
+                        { cancelable: true }
+                    );
+                }) 
             })
         }
     }
-
-    shipmentRejected = () => {
-        const { shipment, userInfo } = this.props;
-        if (this.state.note == '') {
-            Alert.alert(
-                'Warning',
-                'Please fill all the required fields',
-                [
-                    { text: 'OK', onPress: () => console.log('OK Pressed') },
-                ],
-                { cancelable: true }
-            )
-        } else {
-            let rejectedShipment = {
-                "$class": "com.vsii.blockchain.vitracing.ShipmentRejected",
-                "note": shipment.notes + "_" + this.state.note,
-                "shipment": "resource:com.vsii.blockchain.vitracing.Shipment#" + shipment.qrCode,
-            }
-            this.setState({ visible: true }, () => {
-                return fetch(URI + '/ShipmentRejected', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Accept: 'application/json',
-                    },
-                    body: JSON.stringify(rejectedShipment)
-                })
-                    .then(res => res.json())
-                    .then(resJson => {
-                        console.log(resJson);
-                        this.setState({ visible: false, submitted: true });
-                    })
-                    .catch(err => console.log(err))
-            })
-        }
+    componentDidMount() {
+        BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
     }
-
+    componentWillUnmount() {
+        BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
+    }
+    handleBackPress = () => {
+        this.props.navigation.goBack();
+        return true;
+    }
     render() {
         const { submitted, status } = this.state;
-        const { userInfo } = this.props;
+        const { userInfo, shipment } = this.props;
+        let notesArray = shipment.notesRetailer ? shipment.notesRetailer.split('_') : [];
+        let noteString = notesArray.join("\n\n");
         return (
             <Container>
                 <Header icon={true} navigation={this.props.navigation} />
@@ -116,13 +117,37 @@ class VerifyFormMarket extends Component {
                             />
                         </View>
                         <View>
-                            <Text style={styles.label}>Imported Date</Text>
+                            <Text style={styles.label}>Expired Date</Text>
                             <TextInput
                                 style={styles.input}
-                                value={new Date().toDateString()}
+                                value={moment(shipment.expiredDateTime).format('MMM DD YYYY')}
                                 editable={false}
                             />
                         </View>
+                        {
+                            shipment.receivedDateTime &&
+                            <View>
+                                <Text style={styles.label}>Received Date</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    value={moment(shipment.receivedDateTime).format('MMM DD YYYY')}
+                                    editable={false}
+                                />
+                            </View>
+                        }
+
+                        {
+                            shipment.notesRetailer &&
+                            <View>
+                                <Text style={styles.label}>Retailer Notes</Text>
+                                <TextInput
+                                    multiline
+                                    style={styles.note}
+                                    value={noteString}
+                                    editable={false}
+                                />
+                            </View>
+                        }
 
                         <View>
                             <Text style={styles.label}>Note</Text>
@@ -161,12 +186,9 @@ class VerifyFormMarket extends Component {
                                 />
                             </Right>
                         </ListItem>
-
-
                         <Button
                             onPress={() => {
-                                if (status) this.shipmentReceived();
-                                else this.shipmentRejected();
+                                this.shipmentReceived();
                             }}
                             block style={styles.btn}>
                             <Text style={{ color: 'white', fontSize: 16 }}>SUBMIT PERMANENTLY</Text>
@@ -195,10 +217,21 @@ const styles = StyleSheet.create({
         color: 'black',
         backgroundColor: '#FBFBFC',
         fontSize: 18,
-        paddingLeft: 20,
+        paddingHorizontal: 15,
         alignSelf: 'center',
         width: '90%',
         height: 45,
+        borderRadius: 5,
+        borderColor: '#95a5a6',
+        borderWidth: 0.5
+    },
+    note: {
+        color: 'black',
+        backgroundColor: '#FBFBFC',
+        fontSize: 18,
+        paddingHorizontal: 15,
+        alignSelf: 'center',
+        width: '90%',
         borderRadius: 5,
         borderColor: '#95a5a6',
         borderWidth: 0.5
@@ -207,7 +240,7 @@ const styles = StyleSheet.create({
         color: 'black',
         backgroundColor: '#FBFBFC',
         fontSize: 18,
-        paddingLeft: 20,
+        paddingHorizontal: 15,
         alignSelf: 'center',
         width: '90%',
         height: 45,
@@ -232,7 +265,8 @@ const styles = StyleSheet.create({
         color: '#2d3436',
         paddingVertical: 10,
         paddingLeft: 15,
-        fontSize: 15
+        fontSize: 16,
+        fontWeight: 'bold'
     },
     btn: {
         backgroundColor: '#27ae60',

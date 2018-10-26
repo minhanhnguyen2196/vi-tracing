@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, ScrollView, BackHandler, ActivityIndicator, FlatList, TouchableOpacity } from 'react-native';
+import { View, Alert, ScrollView, BackHandler, ActivityIndicator, FlatList, TouchableOpacity } from 'react-native';
 import { Container, Content, Button, Icon, Text, Card, CardItem, Left, Right, Body, Thumbnail } from 'native-base';
 import Header from '../Header';
 import { URI } from '../../utils/config';
+import { fetchTimeout } from '../../utils/fetchTimeout';
 var moment = require('moment');
 
 class ShipmentListForRetailer extends Component {
@@ -32,17 +33,38 @@ class ShipmentListForRetailer extends Component {
             encodeURIComponent(data[key])).join('&');
         const fullUrl = url + `${params ? '?' + params : ''}`;
 
-        fetch(fullUrl, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        })
-            .then(res => res.json())
-            .then(resJson => {
-                this.setState({ shipmentList: resJson, loading: false })
+        fetchTimeout(8000,
+            fetch(fullUrl, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
             })
-            .catch(err => console.log(err))
+                .then(res => res.json())
+                .then(resJson => {
+                    this.setState({ shipmentList: resJson, loading: false })
+                })
+                .catch(err => {
+                    console.log(err)
+                    Alert.alert(
+                        'Connection error',
+                        'Please check your internet connection',
+                        [
+                            { text: 'Go Back', onPress: () => this.props.navigation.goBack() },
+                        ],
+                        { cancelable: true }
+                    );
+                })
+        ).catch(err => {
+            Alert.alert(
+                'Request timeout',
+                'Please check your internet connection',
+                [
+                    { text: 'Go Back', onPress: () => this.props.navigation.goBack() },
+                ],
+                { cancelable: true }
+            );
+        })
     }
 
     _renderItem = ({ item, index }) => {
@@ -80,12 +102,13 @@ class ShipmentListForRetailer extends Component {
                     </Right>
                 </CardItem>
                 <CardItem>
-                    <Left style={{ flex: 1}}/>
+                    <Left style={{ flex: 1 }} />
                     <Right>
-                        <TouchableOpacity 
-                        onPress={() => this.props.navigation.navigate('ShipmentDetail', { shipment: item })}
-                        style={{ alignItems: 'center'}}>
-                            <Text style={{ color: '#2980b9', fontSize: 15}}>VIEW DETAILS</Text>
+                        <TouchableOpacity
+                            hitSlop={{ top: 20, right: 20, left: 20, bottom: 20 }}
+                            onPress={() => this.props.navigation.navigate('ShipmentDetail', { shipment: item })}
+                            style={{ alignItems: 'center' }}>
+                            <Text style={{ color: '#2980b9', fontSize: 15 }}>VIEW DETAILS</Text>
                         </TouchableOpacity>
                     </Right>
                 </CardItem>

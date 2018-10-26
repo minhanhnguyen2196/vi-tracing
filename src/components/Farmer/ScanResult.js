@@ -26,9 +26,17 @@ class ScanResult extends Component {
     }
 
 
+    onNextButtonPress = () => {
+        const { navigation } = this.props;
+        const submitted = navigation.getParam('submitted');
+        if (submitted) {
+            navigation.navigate('InputForm2')
+        } else navigation.navigate('InputForm1');
+    } 
     render() {
         const { navigation } = this.props;
         const result = navigation.getParam('result');
+        
         return (
             <Container>
                 <View style={styles.header}>
@@ -52,7 +60,7 @@ class ScanResult extends Component {
                             <Text style={{ fontSize: 26, color: '#2c3e50', fontWeight: 'bold', paddingTop: 30 }}>Scan Successfull !</Text>
                             <Text style={{ color: '#636e72', paddingTop: 20 }}>Follow next steps to create a packed shipment</Text>
                             <Button
-                                onPress={() => this.props.navigation.navigate('InputForm')}
+                                onPress={() => this.onNextButtonPress()}
                                 block style={{ backgroundColor: '#27ae60', marginTop: 50, marginHorizontal: 20 }} textStyle={{ color: 'white' }} >
                                 <Text>Next Step</Text>
                             </Button>
@@ -82,7 +90,7 @@ export default ScanResult;
 
 const styles = StyleSheet.create({
     header: {
-        height: height * 0.08,
+        height: height * 0.1,
         backgroundColor: '#27ae60',
         alignItems: 'center',
         flexDirection: 'row',

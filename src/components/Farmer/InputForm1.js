@@ -7,7 +7,7 @@ import Header from '../Header';
 
 const { width, height } = Dimensions.get('window');
 const logo = require('../../assets/img/logo2.png')
-class InputForm extends Component {
+class InputForm1 extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -108,7 +108,7 @@ export default connect(mapStateToProps, {
     setQuantity,
     setProductName,
     setDescription
-})(InputForm);
+})(InputForm1);
 
 
 const styles = StyleSheet.create({
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
         color: 'black',
         backgroundColor: '#FBFBFC',
         fontSize: 18,
-        paddingLeft: 20,
+        paddingHorizontal: 15,
         alignSelf: 'center',
         width: '90%',
         height: 45,
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
         color: 'black',
         backgroundColor: '#FBFBFC',
         fontSize: 18,
-        paddingLeft: 20,
+        paddingHorizontal: 15,
         alignSelf: 'center',
         width: '90%',
         height: 45,
@@ -153,7 +153,8 @@ const styles = StyleSheet.create({
         color: '#2d3436',
         paddingVertical: 10,
         paddingLeft: 15,
-        fontSize: 15
+        fontSize: 16,
+        fontWeight: 'bold'
     },
     btn: {
         backgroundColor: '#27ae60',

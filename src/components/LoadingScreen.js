@@ -9,8 +9,8 @@ class LoadingScreen extends Component {
     }
     componentDidMount = () => {
         setTimeout(() => {
-            this.props.navigation.navigate('First');
-        }, 3000);
+            this.props.navigation.navigate('StartScreen');
+        }, 2000);
     }
 
     render() {
@@ -21,7 +21,7 @@ class LoadingScreen extends Component {
                 </View>
                 <ActivityIndicator
                     style={{ paddingTop: 20 }}
-                    color='green' animating size={50}
+                    color='#27ae60' animating size='large'
                 />
             </View>
         );

@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { View, Image, TouchableOpacity, Linking, Vibration, Dimensions, StyleSheet, BackHandler } from 'react-native';
+import { View, Alert, ActivityIndicator, Linking, Vibration, Dimensions, StyleSheet, BackHandler } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import { Button, Icon, Text } from 'native-base';
 import { getShipment } from '../../redux/actionCreator';
 import { connect } from 'react-redux';
+import { fetchTimeout } from '../../utils/fetchTimeout';
 import { URI } from '../../utils/config';
 import Header from '../Header';
 const logo = require('../../assets/img/logo2.png')
@@ -19,7 +20,6 @@ class MarketScan extends Component {
     }
 
     onBarCodeRead = (e) => {
-        this.setState({ qrcode: e.data });
         Vibration.vibrate();
         this.setState({ scanning: false });
         const url = URI + '/Shipment/' + e.data;
@@ -28,29 +28,49 @@ class MarketScan extends Component {
             encodeURIComponent(data[key])).join('&');
         const fullUrl = url + `${params ? '?' + params : ''}`;
 
-        fetch(fullUrl, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        })
-            .then(res => res.json())
-            .then(resJson => {
-                if (resJson.error) {
-                    this.props.navigation.navigate('ScanResult', { result: 'denied' });
-                    return Promise.reject(new Error('Fail!'));
-                } else {
-                    if (resJson.shippedDateTime) {
-                        this.props.getShipment(resJson);
-                        this.props.navigation.navigate('PackageDetailForMarket');
-                    } else {
-                        alert('The shipment has not been delivered yet');
-                        this.props.navigation.navigate('Home');
-                    }
-                
+        fetchTimeout(20000,
+            fetch(fullUrl, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
                 }
             })
-            .catch(err => console.log(err))
+                .then(res => res.json())
+                .then(resJson => {
+                    if (resJson.error) {
+                        this.props.navigation.navigate('ScanResult', { result: 'denied' });
+                        return Promise.reject(new Error());
+                    } else {
+                        if (resJson.shippedDateTime) {
+                            this.props.getShipment(resJson);
+                            this.props.navigation.navigate('PackageDetailForMarket');
+                        } else {
+                            alert('The shipment has not been delivered yet');
+                            this.props.navigation.navigate('Home');
+                        }
+                    }
+                })
+                .catch(err => { 
+                    console.log(err) 
+                    Alert.alert(
+                        'Connection error',
+                        'Please check your internet connection',
+                        [
+                            { text: 'Try again', onPress: () => this.setState({ scanning: true }) },
+                        ],
+                        { cancelable: true }
+                    );
+                })
+        ).catch(err => {
+            Alert.alert(
+                'Scan Failed',
+                'Request timeout',
+                [
+                    { text: 'Try Again', onPress: () => this.setState({ scanning: true }) },
+                ],
+                { cancelable: true }
+            );
+        })
     }
 
     componentDidMount() {
@@ -68,33 +88,37 @@ class MarketScan extends Component {
         const { scanning } = this.state;
         return (
             <View style={{ flex: 1 }}>
-                <Header icon={true} navigation={this.props.navigation}/>
+                <Header icon={true} navigation={this.props.navigation} />
 
                 <View style={styles.container}>
                     {
-                        scanning &&
-                        <RNCamera
-                            ref={ref => {
-                                this.camera = ref;
-                            }}
-                            style={styles.preview}
-                            type={RNCamera.Constants.Type.back}
-                            flashMode={RNCamera.Constants.FlashMode.on}
-                            permissionDialogTitle={'Permission to use camera'}
-                            permissionDialogMessage={'We need your permission to use your camera phone'}
-                            onBarCodeRead={this.onBarCodeRead}
-                        >
-                            <View style={styles.rectangle}>
-                                <View style={styles.rectangleColor} />
-                                <View style={styles.topLeft} />
-                                <View style={styles.topRight} />
-                                <View style={styles.bottomLeft} />
-                                <View style={styles.bottomRight} />
+                        scanning ?
+                            <RNCamera
+                                ref={ref => {
+                                    this.camera = ref;
+                                }}
+                                style={styles.preview}
+                                type={RNCamera.Constants.Type.back}
+                                flashMode={RNCamera.Constants.FlashMode.on}
+                                permissionDialogTitle={'Permission to use camera'}
+                                permissionDialogMessage={'We need your permission to use your camera phone'}
+                                onBarCodeRead={this.onBarCodeRead}
+                            >
+                                <View style={styles.rectangle}>
+                                    <View style={styles.rectangleColor} />
+                                    <View style={styles.topLeft} />
+                                    <View style={styles.topRight} />
+                                    <View style={styles.bottomLeft} />
+                                    <View style={styles.bottomRight} />
+                                </View>
+                                <View style={{ position: 'absolute', bottom: 20, justifyContent: 'center', flex: 1 }}>
+                                    <Text style={{ color: 'white', alignSelf: 'center' }}>Place the QR Code inside the area to Scan it</Text>
+                                </View>
+                            </RNCamera>
+                            :
+                            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                <ActivityIndicator size='large' color='green' animating />
                             </View>
-                            <View style={{ position: 'absolute', bottom: 20, justifyContent: 'center', flex: 1 }}>
-                                <Text style={{ color: 'white', alignSelf: 'center' }}>Place the QR Code inside the area to Scan it</Text>
-                            </View>
-                        </RNCamera>
                     }
                 </View>
             </View>

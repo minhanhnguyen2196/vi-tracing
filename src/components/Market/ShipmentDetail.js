@@ -33,19 +33,25 @@ class ShipmentDetail extends Component {
         const verifiedDateTime = shipment.verifiedDateTime ? moment(shipment.verifiedDateTime).format('MMM DD') : '?';
         const shippedDateTime = shipment.shippedDateTime ? moment(shipment.shippedDateTime).format('MMM DD') : '?';
         const receivedDateTime = shipment.receivedDateTime ? moment(shipment.receivedDateTime).format('MMM DD') : '?';
-        const rejectedDateTime = shipment.rejectedDateTime ? moment(shipment.rejectedDateTime).format('MMM DD') : '?';
 
-        let notesArray = shipment.notes.split('_');
-        let noteVerifier = (notesArray[1]) ? notesArray[1] : 'The shipment has not been verified'
-        let noteShipper = (notesArray[2]) ? notesArray[2] : 'The shipment has not been delivered'
-        let noteRetailer = (notesArray[3]) ? notesArray[3] : 'The shipment has not been received'
+        const notesFarmerArray = shipment.notesFarmer.split('_');
+        const notesFarmer = notesFarmerArray.join("\n");
+
+        const notesVerifierArray = shipment.notesVerifier ? shipment.notesVerifier.split('_') : [];
+        const notesVerifier = notesVerifierArray.length > 0 ? notesVerifierArray.join("\n") : 'The shipment has not been verified';
+
+        const notesShipperArray = shipment.notesShipper ? shipment.notesShipper.split('_') : [];
+        const notesShipper = notesShipperArray.length > 0 ? notesShipperArray.join("\n") : 'The shipment has not been shipped';
+
+        const notesRetailerArray = shipment.notesRetailer ? shipment.notesRetailer.split('_') : [];
+        const notesRetailer = notesRetailerArray.length > 0 ? notesRetailerArray.join("\n") : 'The shipment has not been received';
 
         this.setState({
             data: [
-                { time: packedDateTime, title: 'Packed', description: notesArray[0] },
-                { time: verifiedDateTime, title: 'Verification', description: noteVerifier },
-                { time: shippedDateTime, title: 'Transportation', description: noteShipper },
-                { time: receivedDateTime, title: 'Receipt', description: noteRetailer }
+                { time: packedDateTime, title: 'Packed', description: notesFarmer },
+                { time: verifiedDateTime, title: 'Verification', description: notesVerifier },
+                { time: shippedDateTime, title: 'Transportation', description: notesShipper },
+                { time: receivedDateTime, title: 'Receipt', description: notesRetailer }
             ]
         })
     }
@@ -101,24 +107,13 @@ class ShipmentDetail extends Component {
                             separator
                             circleColor='rgb(45,156,219)'
                             lineColor='rgb(45,156,219)'
-                            timeContainerStyle={{ width: 120 }}
+                            timeContainerStyle={{ width: 90 }}
                             timeStyle={{ textAlign: 'center', backgroundColor: '#27ae60', color: 'white', padding: 5, borderRadius: 13 }}
                             descriptionStyle={{ color: 'gray' }}
                             options={{
                                 style: { paddingTop: 5 }
                             }}
                         />
-
-                        <View style={{ flexDirection: 'row', padding: 10, }}>
-                            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                                <Icon name='cubes' type='FontAwesome' style={{ color: '#27ae60' }} />
-                                <Text style={{ padding: 5 }}>{shipment.quantity} kilograms</Text>
-                            </View>
-                            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                                <Icon name='calendar' type='FontAwesome' style={{ color: '#27ae60' }} />
-                                <Text style={{ padding: 5 }}>{moment(shipment.expiredDateTime).format('MMM DD YYYY')}</Text>
-                            </View>
-                        </View>
                     </View>
                 </Content>
 

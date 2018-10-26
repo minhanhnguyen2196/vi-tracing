@@ -7,7 +7,7 @@ import {
     KeyboardAvoidingView,
     StyleSheet,
     TextInput,
-    DatePickerAndroid, DatePickerIOS, Platform
+    DatePickerAndroid, Platform
 } from 'react-native';
 import {
     Container,
@@ -25,6 +25,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 console.disableYellowBox = true;
 var moment = require('moment');
 import { URI } from '../../utils/config';
+import { fetchTimeout } from '../../utils/fetchTimeout';
 const logo = require('../../assets/img/logo2.png')
 class VerifyForm extends Component {
     constructor(props) {
@@ -74,8 +75,9 @@ class VerifyForm extends Component {
 
 
     shipmentVerified = () => {
+        const { status, note } = this.state;
         const { shipment, userInfo } = this.props;
-        if (this.state.note == '' || this.state.expiredDate == '') {
+        if (note == '' || this.state.expiredDate == '') {
             Alert.alert(
                 'Warning',
                 'Please fill all the required fields',
@@ -85,74 +87,52 @@ class VerifyForm extends Component {
                 { cancelable: true }
             )
         } else {
+            let noteVerifier = userInfo.username + ": " + this.state.note;
             let verifiedShipment = {
                 "$class": "com.vsii.blockchain.vitracing.ShipmentVerified",
-                "note": shipment.notes + "_" + this.state.note,
-                "expiredDateTime": this.state.expiredDate,
+                "status": status ? "VERIFIED" : "REJECTED",
+                "notesVerifier": shipment.notesVerifier ? shipment.notesVerifier + "_" + noteVerifier : noteVerifier,
+                "expiredDateTime": shipment.expiredDateTime ? shipment.expiredDateTime : this.state.expiredDate,
                 "shipment": "resource:com.vsii.blockchain.vitracing.Shipment#" + shipment.qrCode,
                 "verifier": "resource:com.vsii.blockchain.vitracing.Verifier#" + userInfo.id
             }
             this.setState({ visible: true }, () => {
-                return fetch(URI + '/ShipmentVerified', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Accept: 'application/json',
-                    },
-                    body: JSON.stringify(verifiedShipment)
-                })
-                    .then(res => res.json())
-                    .then(resJson => {
-                        console.log(resJson);
-                        this.setState({ visible: false, submitted: true });
-                        this.props.navigation.navigate('SubmitResult');
+                fetchTimeout(10000,
+                    fetch(URI + '/ShipmentVerified', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Accept: 'application/json',
+                        },
+                        body: JSON.stringify(verifiedShipment)
                     })
-                    .catch(err => console.log(err))
+                        .then(res => res.json())
+                        .then(resJson => {
+                            console.log(resJson);
+                            this.setState({ visible: false, submitted: true });
+                            this.props.navigation.navigate('SubmitResult');
+                        })
+                        .catch(err => console.log(err))
+                ).catch(err => {
+                    Alert.alert(
+                        'Submit Failed',
+                        'Request timeout',
+                        [
+                            { text: 'Try Again', onPress: () => this.setState({ visible: false }) },
+                        ],
+                        { cancelable: false }
+                    );
+                })
             })
         }
     }
-
-    shipmentRejected = () => {
-        const { shipment } = this.props;
-        if (this.state.note == '') {
-            Alert.alert(
-                'Warning',
-                'Please fill all the required fields',
-                [
-                    { text: 'OK', onPress: () => console.log('OK Pressed') },
-                ],
-                { cancelable: true }
-            )
-        } else {
-            let rejectedShipment = {
-                "$class": "com.vsii.blockchain.vitracing.ShipmentRejected",
-                "note": shipment.notes + "_" + this.state.note,
-                "shipment": "resource:com.vsii.blockchain.vitracing.Shipment#" + shipment.qrCode,
-            }
-            this.setState({ visible: true }, () => {
-                return fetch(URI + '/ShipmentRejected', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Accept: 'application/json',
-                    },
-                    body: JSON.stringify(rejectedShipment)
-                })
-                    .then(res => res.json())
-                    .then(resJson => {
-                        console.log(resJson);
-                        this.setState({ visible: false, submitted: true });
-                        this.props.navigation.navigate('SubmitResult');
-                    })
-                    .catch(err => console.log(err))
-            })
-        }
-    }
-
 
     render() {
-        const { submitted, status } = this.state;
+        const { status } = this.state;
         const { userInfo, shipment } = this.props;
+        let notesArray = shipment.notesVerifier ? shipment.notesVerifier.split('_') : [];
+        let noteString = notesArray.join("\n\n");
+
         return (
             <Container>
                 <Header icon={true} navigation={this.props.navigation} />
@@ -172,43 +152,60 @@ class VerifyForm extends Component {
                                 editable={false}
                             />
                         </View>
-                        <View>
-                            <Text style={styles.label}>Verified Date</Text>
-                            <TextInput
-                                style={styles.input}
-                                value={new Date().toDateString()}
-                                editable={false}
-                            />
-                        </View>
-                        <View>
-                            <Text style={styles.label}>Expired Date</Text>
-                            <View style={{
-                                height: 45,
-                                borderRadius: 5,
-                                borderColor: '#95a5a6',
-                                borderWidth: 0.5,
-                                padding: 5,
-                                justifyContent: 'center',
-                                backgroundColor: '#FBFBFC',
-                                marginHorizontal: 15
-                            }}>
-                                <DatePicker
-                                    defaultDate={new Date()}
-                                    formatChosenDate={date => { return moment(date).format('ddd MMM DD YYYY')}}
-                                    locale={"en"}
-                                    timeZoneOffsetInMinutes={undefined}
-                                    modalTransparent={false}
-                                    animationType={"fade"}
-
-                                    placeHolderText="Select date"
-                                    textStyle={{ color: "black", fontSize: 18 }}
-                                    placeHolderTextStyle={{ color: "#d3d3d3" }}
-                                    onDateChange={this.setDate}
+                        {
+                            shipment.verifiedDateTime &&
+                            <View>
+                                <Text style={styles.label}>Verified Date</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    value={moment(shipment.verifiedDateTime).format('ddd MMM DD YYYY')}
+                                    editable={false}
                                 />
                             </View>
+                        }
+                        {
+                            shipment.notesVerifier &&
+                            <View>
+                                <Text style={styles.label}>Verifier Note</Text>
+                                <TextInput
+                                    multiline
+                                    style={styles.note}
+                                    value={noteString}
+                                    editable={false}
+                                />
+                            </View>
+                        }
+                        {
+                            shipment.expiredDateTime ? null
+                                :
+                                <View>
+                                    <Text style={styles.label}>Expired Date</Text>
+                                    <View style={{
+                                        height: 45,
+                                        borderRadius: 5,
+                                        borderColor: '#95a5a6',
+                                        borderWidth: 0.5,
+                                        padding: 5,
+                                        justifyContent: 'center',
+                                        backgroundColor: '#FBFBFC',
+                                        marginHorizontal: 15
+                                    }}>
+                                        <DatePicker
+                                            defaultDate={new Date()}
+                                            formatChosenDate={date => { return moment(date).format('ddd MMM DD YYYY') }}
+                                            locale={"en"}
+                                            timeZoneOffsetInMinutes={undefined}
+                                            modalTransparent={false}
+                                            animationType={"fade"}
+                                            placeHolderText="Select date"
+                                            textStyle={{ color: "black", fontSize: 18 }}
+                                            placeHolderTextStyle={{ color: "#d3d3d3" }}
+                                            onDateChange={this.setDate}
+                                        />
+                                    </View>
+                                </View>
+                        }
 
-                           
-                        </View>
                         <View>
                             <Text style={styles.label}>Note</Text>
                             <TextInput
@@ -248,10 +245,7 @@ class VerifyForm extends Component {
                         </ListItem>
 
                         <Button
-                            onPress={() => {
-                                if (status) this.shipmentVerified();
-                                else this.shipmentRejected();
-                            }}
+                            onPress={() => this.shipmentVerified()}
                             block style={styles.btn}>
                             <Text style={{ color: 'white', fontSize: 16 }}>SUBMIT PERMANENTLY</Text>
                         </Button>
@@ -264,27 +258,6 @@ class VerifyForm extends Component {
 
 
 
-
-// <Form>
-//     <Item fixedLabel>
-//         <Label>Verifier ID</Label>
-//         <Input value='#V213213' editable={false} />
-//     </Item>
-//     <Item fixedLabel >
-//         <Label>Verified Date</Label>
-//         <Input value={new Date().toDateString()} editable={false} />
-//     </Item>
-//     <Item fixedLabel >
-//         <Label>Expired Date</Label>
-//         <Input />
-//     </Item>
-//     <Item fixedLabel >
-//         <Label>Note</Label>
-//         <Input />
-//     </Item>
-
-//</Form>
-
 function mapStateToProps(state) {
     return {
         shipment: state.shipment,
@@ -294,17 +267,26 @@ function mapStateToProps(state) {
 
 export default connect(mapStateToProps)(VerifyForm);
 
-
-
 const styles = StyleSheet.create({
     input: {
         color: 'black',
         backgroundColor: '#FBFBFC',
         fontSize: 18,
-        paddingLeft: 20,
+        paddingHorizontal: 15,
         alignSelf: 'center',
         width: '90%',
         height: 45,
+        borderRadius: 5,
+        borderColor: '#95a5a6',
+        borderWidth: 0.5
+    },
+    note: {
+        color: 'black',
+        backgroundColor: '#FBFBFC',
+        fontSize: 18,
+        paddingHorizontal: 15,
+        alignSelf: 'center',
+        width: '90%',
         borderRadius: 5,
         borderColor: '#95a5a6',
         borderWidth: 0.5
@@ -313,7 +295,7 @@ const styles = StyleSheet.create({
         color: 'black',
         backgroundColor: '#FBFBFC',
         fontSize: 18,
-        paddingLeft: 20,
+        paddingHorizontal: 15,
         alignSelf: 'center',
         width: '90%',
         height: 45,
@@ -336,9 +318,10 @@ const styles = StyleSheet.create({
     },
     label: {
         color: '#2d3436',
-        paddingVertical: 10,
+        paddingVertical: 15,
         paddingLeft: 15,
-        fontSize: 15
+        fontSize: 16,
+        fontWeight: 'bold'
     },
     btn: {
         backgroundColor: '#27ae60',

@@ -7,7 +7,8 @@ import Login from '../src/components/Authentication/Login';
 import Scan from '../src/components/Farmer/Scan';
 import VerifiedProfile  from './components/Farmer/VerifiedProfile'
 import ScanResult from './components/Farmer/ScanResult';
-import InputForm from './components/Farmer/InputForm';
+import InputForm1 from './components/Farmer/InputForm1';
+import InputForm2 from './components/Farmer/InputForm2';
 import Submit from './components/Farmer/Submit';
 import Home from './components/Home';
 import ShipmentListForFarmer from './components/Farmer/ShipmentListForFarmer';
@@ -29,7 +30,7 @@ import FormShipper from './components/Shipper/FormShipper';
 import ScanShipper from './components/Shipper/ScanShipper';
 import ShipmentListForShipper from './components/Shipper/ShipmentListForShipper';
 
-import First from './components/First';
+import StartScreen from './components/StartScreen';
 import LoadingScreen from './components/LoadingScreen';
 
 import VerifierOrg from './components/OrgDetail/VerifierOrg';
@@ -40,7 +41,7 @@ import Header from './components/Header';
 
 
 export const AppStack = createStackNavigator({
-    First, 
+    StartScreen, 
     Main,
     LoadingScreen,
     Login,
@@ -50,7 +51,7 @@ export const AppStack = createStackNavigator({
     Profile,
     VerifiedProfile,
     ScanResult,
-    InputForm,
+    InputForm1,
     Submit,
     ShipmentListForFarmer,
     ShipmentDetail,
@@ -68,7 +69,8 @@ export const AppStack = createStackNavigator({
     ShipmentListForRetailer,
     VerifierOrg,
     FarmerOrg,
-    ShipperOrg
+    ShipperOrg,
+    InputForm2
 }, {
         initialRouteName: 'LoadingScreen',
         navigationOptions: { 

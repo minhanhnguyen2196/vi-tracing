@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { View, Image, BackHandler, Dimensions, StyleSheet, TouchableOpacity } from 'react-native';
 import { Button, Icon, Text, Container, Content } from 'native-base';
 import * as Animatable from 'react-native-animatable';
-import Header from '../Header';
 
 const { height, width } = Dimensions.get('window');
 const logo = require('../../assets/img/logo2.png')

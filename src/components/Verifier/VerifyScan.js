@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { View, Image, TouchableOpacity, Linking, Vibration, Alert, StyleSheet, Dimensions, BackHandler } from 'react-native';
+import { View, ActivityIndicator, Linking, Vibration, Alert, StyleSheet, Dimensions, BackHandler } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import { Button, Icon, Text } from 'native-base';
 import { getShipment } from '../../redux/actionCreator';
 import { connect } from 'react-redux';
 import { URI } from '../../utils/config';
+import { fetchTimeout } from '../../utils/fetchTimeout';
 import Header from '../Header';
 
 const deviceHeight = Dimensions.get("window").height;
@@ -31,7 +32,6 @@ class VerifyScan extends Component {
     }
 
     onBarCodeRead = (e) => {
-        this.setState({ qrcode: e.data });
         Vibration.vibrate();
         this.setState({ scanning: false });
 
@@ -41,23 +41,44 @@ class VerifyScan extends Component {
             encodeURIComponent(data[key])).join('&');
         const fullUrl = url + `${params ? '?' + params : ''}`;
 
-        fetch(fullUrl, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        })
-            .then(res => res.json())
-            .then(resJson => {
-                if (resJson.error) {
-                    this.props.navigation.navigate('ScanResult', { result: 'denied' });
-                    return Promise.reject(new Error('Fail!'));
-                } else {
-                    this.props.getShipment(resJson);
-                    this.props.navigation.navigate('PackageDetailForVerifier');
+        fetchTimeout(20000, 
+            fetch(fullUrl, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
                 }
             })
-            .catch(err => console.log(err))
+                .then(res => res.json())
+                .then(resJson => {
+                    if (resJson.error) {
+                        this.props.navigation.navigate('ScanResult', { result: 'denied' });
+                        return Promise.reject(new Error('Fail!'));
+                    } else {
+                        this.props.getShipment(resJson);
+                        this.props.navigation.navigate('PackageDetailForVerifier');
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                    Alert.alert(
+                        'Connection Error',
+                        'Please check your internet connection',
+                        [
+                            { text: 'Try again', onPress: () => this.setState({ scanning: true }) },
+                        ],
+                        { cancelable: true }
+                    );
+                })
+        ).catch(err => {
+            Alert.alert(
+                'Request timeout',
+                'Please check your internet connection',
+                [
+                    { text: 'Try again', onPress: () => this.setState({ scanning: true }) },
+                ],
+                { cancelable: true }
+            );
+        })
     }
 
 
@@ -69,7 +90,7 @@ class VerifyScan extends Component {
 
                 <View style={styles.container}>
                     {
-                        scanning &&
+                        scanning ?
                         <RNCamera
                             ref={ref => {
                                 this.camera = ref;
@@ -92,6 +113,10 @@ class VerifyScan extends Component {
                                 <Text style={{ color: 'white', alignSelf: 'center' }}>Place the QR Code inside the area to Scan it</Text>
                             </View>
                         </RNCamera>
+                        : 
+                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                            <ActivityIndicator  size='large' color='green' animating/>
+                        </View>
                     }
                 </View>
             </View>
