@@ -47,7 +47,7 @@ class VerifyFormMarket extends Component {
             let receivedShipment = {
                 "$class": "com.vsii.blockchain.vitracing.ShipmentReceived",
                 "status": status ? "RECEIVED" : "REJECTED",
-                "notesRetailer": shipment.notesRetailer ? shipment.notesRetailer + "_" + moment().format('HH:mm') + ' - ' + noteRetailer : moment().format('HH:mm') + ' - ' + noteRetailer,
+                "notesRetailer": shipment.notesRetailer ? shipment.notesRetailer + "_" + moment().format('MMM DD YYYY HH:mm') + ' - ' + noteRetailer : moment().format('MMM DD YYYY HH:mm') + ' - ' + noteRetailer,
                 "shipment": "resource:com.vsii.blockchain.vitracing.Shipment#" + shipment.qrCode,
                 "retailer": retailerArray
             }

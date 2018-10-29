@@ -27,7 +27,7 @@ class InputForm2 extends Component {
             "$class": "com.vsii.blockchain.vitracing.Shipment",
             "productName": shipment.productName,
             "quantity": shipment.quantity,
-            "notesFarmer": shipment.notesFarmer + "_" + moment().format('HH:mm') + " - " + userInfo.username + ": " + packageDetail.descr,
+            "notesFarmer": shipment.notesFarmer + "_" + moment().format('MMM DD YYYY HH:mm') + " - " + userInfo.username + ": " + packageDetail.descr,
             "farmer": "resource:com.vsii.blockchain.vitracing.Farmer#" + shipment.farmer.personId,
             "status": "PACKED"
         }

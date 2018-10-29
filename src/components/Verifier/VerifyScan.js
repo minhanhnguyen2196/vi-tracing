@@ -47,8 +47,14 @@ class VerifyScan extends Component {
             timeout: 10000
         })
             .then(res => {
-                this.props.getShipment(res.data);
-                this.props.navigation.navigate('PackageDetailForVerifier');
+                if (res.data.shipper) {
+                    alert('The shipment has already been delivered');
+                    this.props.navigation.navigate('Home');
+                } else {
+                    this.props.getShipment(res.data);
+                    this.props.navigation.navigate('PackageDetailForVerifier');
+                }
+
             })
             .catch(err => {
                 if (err.response) {

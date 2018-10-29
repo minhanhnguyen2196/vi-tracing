@@ -33,7 +33,7 @@ class Submit extends Component {
         let packedShipment = {
             "$class": "com.vsii.blockchain.vitracing.ShipmentPacked",
             "productName": packageDetail.productName,
-            "notesFarmer": moment().format('HH:mm') + ' - ' + userInfo.username + ": " + packageDetail.descr,
+            "notesFarmer": moment().format('MMM DD YYYY HH:mm') + ' - ' + userInfo.username + ": " + packageDetail.descr,
             "quantity": packageDetail.quantity,
             "qrCode": packageDetail.qrCode,
             "farmerId": userInfo.id,

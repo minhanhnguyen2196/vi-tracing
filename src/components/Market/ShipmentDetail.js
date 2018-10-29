@@ -60,7 +60,7 @@ class ShipmentDetail extends Component {
         const { navigation } = this.props;
         const shipment = navigation.getParam('shipment');
         if (shipment.verifier) {
-            this.props.navigation.navigate('VerifierOrg', { verifier: shipment.verifier })
+            this.props.navigation.navigate('VerifierOrg', { verifier: [...new Set(shipment.verifier)] })
         } else alert('The shipment has not been verified by any organization')
     }
 
@@ -68,7 +68,7 @@ class ShipmentDetail extends Component {
         const { navigation } = this.props;
         const shipment = navigation.getParam('shipment');
         if (shipment.shipper) {
-            this.props.navigation.navigate('ShipperOrg', { shipper: shipment.shipper })
+            this.props.navigation.navigate('ShipperOrg', { shipper: [...new Set(shipment.shipper)] })
         } else alert('The shipment has not been delivered by any organization')
     }
     render() {
@@ -100,6 +100,7 @@ class ShipmentDetail extends Component {
                             </TouchableOpacity>
                         </View>
                         <Timeline
+                            showTime={false}
                             style={{ flex: 1, paddingVertical: 20 }}
                             data={this.state.data}
                             circleSize={25}

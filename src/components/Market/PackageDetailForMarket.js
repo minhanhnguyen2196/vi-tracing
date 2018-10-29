@@ -26,7 +26,7 @@ class PackageDetailForMarket extends Component {
         
         const { shipment } = this.props;
         let verifierOrg = [...new Set(shipment.verifier.map(verifier => { return verifier.org.name}))].join(", ");
-        let shipperOrg = shipment.shipper.map(shipper => { return shipper.org.name}).join(", ");
+        let shipperOrg = [...new Set(shipment.shipper.map(shipper => { return shipper.org.name}))].join(", ");
         return (
             <Container>
                 <Content padder>

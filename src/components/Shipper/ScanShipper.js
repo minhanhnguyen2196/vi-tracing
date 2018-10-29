@@ -43,8 +43,13 @@ class ScanShipper extends Component {
         })
             .then(res => {
                 if (res.data.verifiedDateTime) {
-                    this.props.getShipment(res.data);
-                    this.props.navigation.navigate('FormShipper');
+                    if (res.data.retailer) {
+                        alert('The shipment has been received');
+                        this.props.navigation.navigate('Home');
+                    } else {
+                        this.props.getShipment(res.data);
+                        this.props.navigation.navigate('FormShipper');
+                    }
                 } else {
                     alert('The Shipment has not been verified yet');
                     this.props.navigation.navigate('Home');

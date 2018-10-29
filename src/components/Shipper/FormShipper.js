@@ -57,7 +57,7 @@ class FormShipper extends Component {
             let shippedShipment = {
                 "$class": "com.vsii.blockchain.vitracing.ShipmentShipped",
                 "status": "SHIPPED",
-                "notesShipper": shipment.notesShipper ? shipment.notesShipper + "_" + moment().format('HH:mm') + ' - ' + noteShipper : moment().format('HH:mm') + ' - ' + noteShipper,
+                "notesShipper": shipment.notesShipper ? shipment.notesShipper + "_" + moment().format('MMM DD YYYY HH:mm') + ' - ' + noteShipper : moment().format('MMM DD YYYY HH:mm') + ' - ' + noteShipper,
                 "shipment": "resource:com.vsii.blockchain.vitracing.Shipment#" + shipment.qrCode,
                 "shipper": shipperArray
             }

@@ -99,7 +99,7 @@ class VerifyForm extends Component {
             let verifiedShipment = {
                 "$class": "com.vsii.blockchain.vitracing.ShipmentVerified",
                 "status": status ? "VERIFIED" : "REJECTED",
-                "notesVerifier": shipment.notesVerifier ? shipment.notesVerifier + "_" + moment().format('HH:mm') + ' - ' + noteVerifier : moment().format('HH:mm') + ' - ' + noteVerifier,
+                "notesVerifier": shipment.notesVerifier ? shipment.notesVerifier + "_" + moment().format('MMM DD YYYY HH:mm') + ' - ' + noteVerifier : moment().format('MMM DD YYYY HH:mm') + ' - ' + noteVerifier,
                 "expiredDateTime": shipment.expiredDateTime ? shipment.expiredDateTime : this.state.expiredDate,
                 "shipment": "resource:com.vsii.blockchain.vitracing.Shipment#" + shipment.qrCode,
                 "verifier": verifierArray
