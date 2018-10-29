@@ -8,7 +8,8 @@ import { fetchTimeout } from '../../utils/fetchTimeout';
 import Header from '../Header';
 console.disableYellowBox = true;
 var moment = require('moment');
-const {height} = Dimensions.get('window');
+const { height } = Dimensions.get('window');
+const axios = require('axios');
 
 class FormShipper extends Component {
     constructor(props) {
@@ -47,56 +48,78 @@ class FormShipper extends Component {
         } else {
             let noteShipper = userInfo.username + ': ' + this.state.note;
             let shipperNamespace = "resource:com.vsii.blockchain.vitracing.Shipper#";
-            let newShipper =  shipperNamespace + userInfo.id;
+            let newShipper = shipperNamespace + userInfo.id;
             let shipperArray = [];
             if (shipment.shipper) {
                 shipperArray = shipment.shipper;
-            }  
+            }
             shipperArray.push(newShipper);
             let shippedShipment = {
                 "$class": "com.vsii.blockchain.vitracing.ShipmentShipped",
                 "status": "SHIPPED",
-                "notesShipper": shipment.notesShipper ? shipment.notesShipper + "_" + noteShipper : noteShipper,
+                "notesShipper": shipment.notesShipper ? shipment.notesShipper + "_" + moment().format('HH:mm') + ' - ' + noteShipper : moment().format('HH:mm') + ' - ' + noteShipper,
                 "shipment": "resource:com.vsii.blockchain.vitracing.Shipment#" + shipment.qrCode,
                 "shipper": shipperArray
             }
             this.setState({ visible: true }, () => {
-                fetchTimeout(10000, 
-                    fetch(URI + '/ShipmentShipped', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            Accept: 'application/json',
-                        },
-                        body: JSON.stringify(shippedShipment)
-                    })
-                        .then(res => res.json())
-                        .then(resJson => {
-                            console.log(resJson);
-                            this.setState({ visible: false, submitted: true });
-                            this.props.navigation.navigate('SubmitResult');
-                        })
-                        .catch(err => {
-                            console.log(err);
-                            Alert.alert(
-                                'Submit Failed',
-                                'Connection error',
-                                [
-                                    { text: 'Try Again', onPress: () => this.setState({ visible: false }) },
-                                ],
-                                { cancelable: false }
-                            );
-                        })
-                ). catch(err => {
-                    Alert.alert(
-                        'Submit Failed',
-                        'Request timeout',
-                        [
-                            { text: 'Try Again', onPress: () => this.setState({ visible: false }) },
-                        ],
-                        { cancelable: false }
-                    );
+                axios({
+                    method: 'post',
+                    data: shippedShipment,
+                    url: URI + '/ShipmentShipped',
+                    timeout: 10000
                 })
+                    .then(res => {
+                        this.setState({ visible: false, submitted: true });
+                        this.props.navigation.navigate('SubmitResult');
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        Alert.alert(
+                            'Submit Failed',
+                            'Connection error',
+                            [
+                                { text: 'Try Again', onPress: () => this.setState({ visible: false }) },
+                            ],
+                            { cancelable: false }
+                        );
+                    })
+
+                // fetchTimeout(10000,
+                //     fetch(URI + '/ShipmentShipped', {
+                //         method: 'POST',
+                //         headers: {
+                //             'Content-Type': 'application/json',
+                //             Accept: 'application/json',
+                //         },
+                //         body: JSON.stringify(shippedShipment)
+                //     })
+                //         .then(res => res.json())
+                //         .then(resJson => {
+                //             console.log(resJson);
+                //             this.setState({ visible: false, submitted: true });
+                //             this.props.navigation.navigate('SubmitResult');
+                //         })
+                //         .catch(err => {
+                //             console.log(err);
+                //             Alert.alert(
+                //                 'Submit Failed',
+                //                 'Connection error',
+                //                 [
+                //                     { text: 'Try Again', onPress: () => this.setState({ visible: false }) },
+                //                 ],
+                //                 { cancelable: false }
+                //             );
+                //         })
+                // ).catch(err => {
+                //     Alert.alert(
+                //         'Submit Failed',
+                //         'Request timeout',
+                //         [
+                //             { text: 'Try Again', onPress: () => this.setState({ visible: false }) },
+                //         ],
+                //         { cancelable: false }
+                //     );
+                // })
             })
         }
     }

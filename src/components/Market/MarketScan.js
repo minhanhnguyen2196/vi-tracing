@@ -10,6 +10,7 @@ import Header from '../Header';
 const logo = require('../../assets/img/logo2.png')
 const deviceHeight = Dimensions.get("window").height;
 const deviceWidth = Dimensions.get("window").width;
+const axios = require('axios');
 class MarketScan extends Component {
     constructor(props) {
         super(props);
@@ -28,30 +29,24 @@ class MarketScan extends Component {
             encodeURIComponent(data[key])).join('&');
         const fullUrl = url + `${params ? '?' + params : ''}`;
 
-        fetchTimeout(20000,
-            fetch(fullUrl, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
+        axios({
+            method: 'get',
+            url: fullUrl,
+            timeout: 10000
+        })
+            .then(res => {
+                if (res.data.shippedDateTime) {
+                    this.props.getShipment(res.data);
+                    this.props.navigation.navigate('PackageDetailForMarket');
+                } else {
+                    alert('The shipment has not been delivered yet');
+                    this.props.navigation.navigate('Home');
                 }
             })
-                .then(res => res.json())
-                .then(resJson => {
-                    if (resJson.error) {
-                        this.props.navigation.navigate('ScanResult', { result: 'denied' });
-                        return Promise.reject(new Error());
-                    } else {
-                        if (resJson.shippedDateTime) {
-                            this.props.getShipment(resJson);
-                            this.props.navigation.navigate('PackageDetailForMarket');
-                        } else {
-                            alert('The shipment has not been delivered yet');
-                            this.props.navigation.navigate('Home');
-                        }
-                    }
-                })
-                .catch(err => { 
-                    console.log(err) 
+            .catch(err => {
+                if (err.response) {
+                    this.props.navigation.navigate('ScanResult', { result: 'denied' });
+                } else if (err.request) {
                     Alert.alert(
                         'Connection error',
                         'Please check your internet connection',
@@ -60,17 +55,62 @@ class MarketScan extends Component {
                         ],
                         { cancelable: true }
                     );
-                })
-        ).catch(err => {
-            Alert.alert(
-                'Scan Failed',
-                'Request timeout',
-                [
-                    { text: 'Try Again', onPress: () => this.setState({ scanning: true }) },
-                ],
-                { cancelable: true }
-            );
-        })
+                } else if (err.code == 'ECONNABORTED'){
+                    Alert.alert(
+                        'Login Failed',
+                        'Request timeout',
+                        [
+                            { text: 'Try Again', onPress: () => this.setState({ visible: false }) },
+                        ],
+                        { cancelable: false }
+                    );
+                }
+            })
+
+
+        // fetchTimeout(20000,
+        //     fetch(fullUrl, {
+        //         method: 'GET',
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //         }
+        //     })
+        //         .then(res => res.json())
+        //         .then(resJson => {
+        //             if (resJson.error) {
+        //                 this.props.navigation.navigate('ScanResult', { result: 'denied' });
+        //                 return Promise.reject(new Error());
+        //             } else {
+        //                 if (resJson.shippedDateTime) {
+        //                     this.props.getShipment(resJson);
+        //                     this.props.navigation.navigate('PackageDetailForMarket');
+        //                 } else {
+        //                     alert('The shipment has not been delivered yet');
+        //                     this.props.navigation.navigate('Home');
+        //                 }
+        //             }
+        //         })
+        //         .catch(err => {
+        //             console.log(err)
+        //             Alert.alert(
+        //                 'Connection error',
+        //                 'Please check your internet connection',
+        //                 [
+        //                     { text: 'Try again', onPress: () => this.setState({ scanning: true }) },
+        //                 ],
+        //                 { cancelable: true }
+        //             );
+        //         })
+        // ).catch(err => {
+        //     Alert.alert(
+        //         'Scan Failed',
+        //         'Request timeout',
+        //         [
+        //             { text: 'Try Again', onPress: () => this.setState({ scanning: true }) },
+        //         ],
+        //         { cancelable: true }
+        //     );
+        // })
     }
 
     componentDidMount() {

@@ -10,6 +10,7 @@ import { fetchTimeout } from '../../utils/fetchTimeout';
 const logo = require('../../assets/img/logo2.png')
 const deviceHeight = Dimensions.get("window").height;
 const deviceWidth = Dimensions.get("window").width;
+const axios = require('axios');
 
 class Scan extends Component {
     constructor(props) {
@@ -27,72 +28,96 @@ class Scan extends Component {
         const params = Object.keys(data).map(key => key + '=' +
             encodeURIComponent(data[key])).join('&');
         const fullUrl = url + `${params ? '?' + params : ''}`;
-        fetch(fullUrl, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            }
+
+        axios({
+            method: 'get',
+            url: fullUrl,
+            timeout: 10000
         })
-            .then(res => res.json())
-            .then(resJson => {
-                if (resJson.error) {
-                    this.props.navigation.navigate('ScanResult', { result: 'success', submitted: false });
-                } else {
-                    this.props.getShipment(resJson);
-                    this.props.navigation.navigate('ScanResult', { result: 'success', submitted: true });
-                }
+            .then(res => {
+                this.props.getShipment(res.data);
+                this.props.navigation.navigate('ScanResult', { result: 'success', submitted: true });
             })
-            .catch(err => console.log(err))
+            .catch(err => {
+                console.log(err);
+                this.props.navigation.navigate('ScanResult', { result: 'success', submitted: false });
+            })
+
+        // fetch(fullUrl, {
+        //     method: 'GET',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     }
+        // })
+        //     .then(res => res.json())
+        //     .then(resJson => {
+        //         if (resJson.error) {
+        //             this.props.navigation.navigate('ScanResult', { result: 'success', submitted: false });
+        //         } else {
+        //             this.props.getShipment(resJson);
+        //             this.props.navigation.navigate('ScanResult', { result: 'success', submitted: true });
+        //         }
+        //     })
+        //     .catch(err => console.log(err))
     }
 
     onBarCodeRead = (e) => {
         Vibration.vibrate();
         this.setState({ scanning: false });
-
-        fetchTimeout(20000,
-            fetch(URI1 + '/qrcode/' + e.data, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
+        fetch(URI1 + '/qrcode/' + e.data, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+            .then(res => {
+                if (res.status !== 404) {
+                    return res.json();
                 }
             })
-                .then(res => {
-                    if (res.status !== 404) {
-                        return res.json();
-                    } else {
-                        this.props.navigation.navigate('ScanResult', { result: 'denied' });
-                        return Promise.reject(new Error());
-                    }
-                })
-                .then(resJson => {
-                    if (resJson.participantId === this.props.userInfo.participantId) {
-                        this.props.setQRCode(e.data);
-                        this.getShipment(e);
-                    } else {
-                        this.props.navigation.navigate('ScanResult', { result: 'denied' });
-                    }
-                })
-                .catch(err => {
-                    console.log(err)
-                    Alert.alert(
-                        'Scan error',
-                        'Please check your connection',
-                        [
-                            { text: 'Try again', onPress: () => this.setState({ scanning: true }) },
-                        ],
-                        { cancelable: false }
-                    );
-                })
-        ).catch(err => {
-            Alert.alert(
-                'Request timeout',
-                'Please check your connection',
-                [
-                    { text: 'Try again', onPress: () => this.setState({ scanning: true }) },
-                ],
-                { cancelable: false }
-            );
-        })
+            .then(resJson => {
+                if (resJson.participantId === this.props.userInfo.participantId) {
+                    this.props.setQRCode(e.data);
+                    this.getShipment(e);
+                } else {
+                    this.props.navigation.navigate('ScanResult', { result: 'denied' });
+                }
+            })
+            .catch(err => {
+                console.log(err)
+                this.props.navigation.navigate('ScanResult', { result: 'denied' });
+            })
+
+        // axios({
+        //     method: 'get',
+        //     url: URI1 + '/qrcode/' + e.data,
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     },
+        //     timeout: 10000
+        // })  
+
+        //     .then(res => {
+        //         console.log(res);
+        //         if (res.data.participantId === this.props.userInfo.participantId) {
+        //             this.props.setQRCode(e.data);
+        //             this.getShipment(e);
+        //         } else {
+        //             console.log('Denied')
+        //             this.props.navigation.navigate('ScanResult', { result: 'denied' });
+        //         }
+        //     })
+        //     .catch(err => {
+        //         console.log(err);
+        //         Alert.alert(
+        //             'Request timeout',
+        //             'Please check your connection',
+        //             [
+        //                 { text: 'Try again', onPress: () => this.setState({ scanning: true }) },
+        //             ],
+        //             { cancelable: false }
+        //         );
+        //     })
     }
 
     componentDidMount() {
@@ -259,3 +284,50 @@ function mapStateToProps(state) {
 }
 
 export default connect(mapStateToProps, { setQRCode, getShipment })(Scan);
+
+
+
+//fetchTimeout(20000,
+    //     fetch(URI1 + '/qrcode/' + e.data, {
+    //         method: 'GET',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //         }
+    //     })
+    //         .then(res => {
+    //             if (res.status !== 404) {
+    //                 return res.json();
+    //             } else {
+    //                 this.props.navigation.navigate('ScanResult', { result: 'denied' });
+    //                 return Promise.reject(new Error());
+    //             }
+    //         })
+    //         .then(resJson => {
+    //             if (resJson.participantId === this.props.userInfo.participantId) {
+    //                 this.props.setQRCode(e.data);
+    //                 this.getShipment(e);
+    //             } else {
+    //                 this.props.navigation.navigate('ScanResult', { result: 'denied' });
+    //             }
+    //         })
+    //         .catch(err => {
+    //             console.log(err)
+    //             Alert.alert(
+    //                 'Scan error',
+    //                 'Please check your connection',
+    //                 [
+    //                     { text: 'Try again', onPress: () => this.setState({ scanning: true }) },
+    //                 ],
+    //                 { cancelable: false }
+    //             );
+    //         })
+    // ).catch(err => {
+    //     Alert.alert(
+    //         'Request timeout',
+    //         'Please check your connection',
+    //         [
+    //             { text: 'Try again', onPress: () => this.setState({ scanning: true }) },
+    //         ],
+    //         { cancelable: false }
+    //     );
+    // })

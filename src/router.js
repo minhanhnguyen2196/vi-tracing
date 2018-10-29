@@ -13,7 +13,7 @@ import Submit from './components/Farmer/Submit';
 import Home from './components/Home';
 import ShipmentListForFarmer from './components/Farmer/ShipmentListForFarmer';
 import SubmitResult from './components/Farmer/SubmitResult';
-import Profile from './components/Farmer/Profile';
+
 
 import VerifyScan from './components/Verifier/VerifyScan';
 import PackageDetailForVerifier from './components/Verifier/PackageDetailForVerifier';
@@ -48,7 +48,6 @@ export const AppStack = createStackNavigator({
     Scan,
     Header,
     Home,
-    Profile,
     VerifiedProfile,
     ScanResult,
     InputForm1,

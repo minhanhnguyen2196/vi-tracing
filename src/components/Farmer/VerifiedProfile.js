@@ -10,6 +10,7 @@ const shipper = require('../../assets/img/shipper.png');
 const verifier = require('../../assets/img/verifier1.png');
 const retailer = require('../../assets/img/retailer.png');
 
+const axios = require('axios');
 class VerifiedProfile extends Component {
     constructor(props) {
         super(props);
@@ -47,22 +48,18 @@ class VerifiedProfile extends Component {
         const params = Object.keys(data).map(key => key + '=' +
             encodeURIComponent(data[key])).join('&');
         const fullUrl = url + `${params ? '?' + params : ''}`;
-        fetchTimeout(8000,
-            fetch(fullUrl, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
+
+        axios({
+            method: 'get',
+            url: fullUrl,
+            timeout: 10000
+        })
+            .then(res => {
+                this.setState({ loading: false, profile: res.data })
+                console.log(this.state.profile)
             })
-                .then(res => res.json())
-                .then(resJson => {
-                    //console.log(resJson);
-                    this.setState({ loading: false, profile: resJson })
-                    console.log(this.state.profile)
-                    // alert('Ok')
-                })
-                .catch(err => { 
-                    console.log(err) 
+            .catch(err => {
+                if (err.response) {
                     Alert.alert(
                         'Connection Error',
                         'Please check your internet connection',
@@ -71,17 +68,53 @@ class VerifiedProfile extends Component {
                         ],
                         { cancelable: true }
                     );
-                })
-        ).catch(err => {
-            Alert.alert(
-                'Request timeout',
-                'Please check your internet connection',
-                [
-                    { text: 'Go Back', onPress: () => this.props.navigation.goBack() },
-                ],
-                { cancelable: true }
-            );
-        })
+                } else if (err.request) {
+                    Alert.alert(
+                        'Request timeout',
+                        'Please check your internet connection',
+                        [
+                            { text: 'Go Back', onPress: () => this.props.navigation.goBack() },
+                        ],
+                        { cancelable: true }
+                    );
+                }
+            })
+
+        // fetchTimeout(8000,
+        //     fetch(fullUrl, {
+        //         method: 'GET',
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //         }
+        //     })
+        //         .then(res => res.json())
+        //         .then(resJson => {
+        //             //console.log(resJson);
+        //             this.setState({ loading: false, profile: resJson })
+        //             console.log(this.state.profile)
+        //             // alert('Ok')
+        //         })
+        //         .catch(err => {
+        //             console.log(err)
+        //             Alert.alert(
+        //                 'Connection Error',
+        //                 'Please check your internet connection',
+        //                 [
+        //                     { text: 'Go Back', onPress: () => this.props.navigation.goBack() },
+        //                 ],
+        //                 { cancelable: true }
+        //             );
+        //         })
+        // ).catch(err => {
+        //     Alert.alert(
+        //         'Request timeout',
+        //         'Please check your internet connection',
+        //         [
+        //             { text: 'Go Back', onPress: () => this.props.navigation.goBack() },
+        //         ],
+        //         { cancelable: true }
+        //     );
+        // })
     }
 
     componentWillUnmount() {

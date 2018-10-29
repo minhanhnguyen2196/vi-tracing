@@ -47,7 +47,7 @@ class SubmitResult extends Component {
                         style={{ justifyContent: 'center', alignItems: 'center', width: 100, height: 100, borderRadius: 50, backgroundColor: '#27ae60', borderWidth: 5, borderColor: '#D8EEDB' }}>
                         <Icon name='check' style={{ color: 'white', fontSize: 40 }} type='FontAwesome' />
                     </Animatable.View>
-                    <Text style={{ fontSize: 26, color: '#2c3e50', fontWeight: 'bold', paddingTop: 30, alignSelf: 'center' }}>Submit Successfull !</Text>
+                    <Text style={{ fontSize: 26, color: '#2c3e50', fontWeight: 'bold', paddingTop: 30, alignSelf: 'center' }}>Submit Successful !</Text>
                     <Text style={{ color: '#636e72', paddingTop: 20, paddingVertical: 10 }}>
                         The shipment has been updated
                     </Text>

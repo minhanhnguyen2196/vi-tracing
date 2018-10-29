@@ -8,6 +8,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import { URI } from '../../utils/config';
 import { fetchTimeout } from '../../utils/fetchTimeout';
 var moment = require('moment');
+const axios = require('axios')
 
 const { width, height } = Dimensions.get('window');
 const logo = require('../../assets/img/logo2.png')
@@ -26,39 +27,61 @@ class InputForm2 extends Component {
             "$class": "com.vsii.blockchain.vitracing.Shipment",
             "productName": shipment.productName,
             "quantity": shipment.quantity,
-            "notesFarmer": shipment.notesFarmer + "_" + userInfo.username + ": " + packageDetail.descr,
+            "notesFarmer": shipment.notesFarmer + "_" + moment().format('HH:mm') + " - " + userInfo.username + ": " + packageDetail.descr,
             "farmer": "resource:com.vsii.blockchain.vitracing.Farmer#" + shipment.farmer.personId,
             "status": "PACKED"
         }
 
         this.setState({ visible: true }, () => {
-            fetchTimeout(10000,
-                fetch(URI + '/Shipment/' + shipment.qrCode, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Accept: 'application/json',
-                    },
-                    body: JSON.stringify(packedShipment)
-                })
-                    .then(res => res.json())
-                    .then(resJson => {
-                        console.log(resJson);
-                        this.setState({ visible: false });
-                        this.props.navigation.navigate('SubmitResult');
-                    })
-                    .catch(err => console.log(err))
-            ).catch(err => {
-                console.log(err);
-                Alert.alert(
-                    'Submit Failed',
-                    'Request timeout',
-                    [
-                        { text: 'Try Again', onPress: () => this.setState({ visible: false }) },
-                    ],
-                    { cancelable: true }
-                );
+            axios({
+                method: 'put',
+                url: URI + '/Shipment/' + shipment.qrCode,
+                data: packedShipment,
+                timeout: 10000
             })
+                .then(res => {
+                    console.log(res)
+                    this.setState({ visible: false });
+                    this.props.navigation.navigate('SubmitResult');
+                })
+                .catch(err => {
+                    Alert.alert(
+                        'Submit Failed',
+                        'Check your connection',
+                        [
+                            { text: 'Try Again', onPress: () => this.setState({ visible: false }) },
+                        ],
+                        { cancelable: true }
+                    );
+                })
+
+            // fetchTimeout(10000,
+            //     fetch(URI + '/Shipment/' + shipment.qrCode, {
+            //         method: 'PUT',
+            //         headers: {
+            //             'Content-Type': 'application/json',
+            //             Accept: 'application/json',
+            //         },
+            //         body: JSON.stringify(packedShipment)
+            //     })
+            //         .then(res => res.json())
+            //         .then(resJson => {
+            //             console.log(resJson);
+            //             this.setState({ visible: false });
+            //             this.props.navigation.navigate('SubmitResult');
+            //         })
+            //         .catch(err => console.log(err))
+            // ).catch(err => {
+            //     console.log(err);
+            //     Alert.alert(
+            //         'Submit Failed',
+            //         'Request timeout',
+            //         [
+            //             { text: 'Try Again', onPress: () => this.setState({ visible: false }) },
+            //         ],
+            //         { cancelable: true }
+            //     );
+            // })
         })
     }
 

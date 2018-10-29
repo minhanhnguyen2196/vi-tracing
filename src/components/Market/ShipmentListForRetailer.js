@@ -3,7 +3,7 @@ import { View, Alert, ScrollView, BackHandler, ActivityIndicator, FlatList, Touc
 import { Container, Content, Button, Icon, Text, Card, CardItem, Left, Right, Body, Thumbnail } from 'native-base';
 import Header from '../Header';
 import { URI } from '../../utils/config';
-import { fetchTimeout } from '../../utils/fetchTimeout';
+const axios = require('axios');
 var moment = require('moment');
 
 class ShipmentListForRetailer extends Component {
@@ -33,38 +33,57 @@ class ShipmentListForRetailer extends Component {
             encodeURIComponent(data[key])).join('&');
         const fullUrl = url + `${params ? '?' + params : ''}`;
 
-        fetchTimeout(8000,
-            fetch(fullUrl, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            })
-                .then(res => res.json())
-                .then(resJson => {
-                    this.setState({ shipmentList: resJson, loading: false })
-                })
-                .catch(err => {
-                    console.log(err)
-                    Alert.alert(
-                        'Connection error',
-                        'Please check your internet connection',
-                        [
-                            { text: 'Go Back', onPress: () => this.props.navigation.goBack() },
-                        ],
-                        { cancelable: true }
-                    );
-                })
-        ).catch(err => {
-            Alert.alert(
-                'Request timeout',
-                'Please check your internet connection',
-                [
-                    { text: 'Go Back', onPress: () => this.props.navigation.goBack() },
-                ],
-                { cancelable: true }
-            );
+        axios({
+            method: 'get',
+            url: fullUrl,
+            timeout: 10000
         })
+            .then(res => {
+                this.setState({ shipmentList: res.data, loading: false })
+            })
+            .catch(err => {
+                Alert.alert(
+                    'Connection error',
+                    'Please check your internet connection',
+                    [
+                        { text: 'Go Back', onPress: () => this.props.navigation.goBack() },
+                    ],
+                    { cancelable: true }
+                );
+            })
+
+        // fetchTimeout(8000,
+        //     fetch(fullUrl, {
+        //         method: 'GET',
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //         }
+        //     })
+        //         .then(res => res.json())
+        //         .then(resJson => {
+        //             this.setState({ shipmentList: resJson, loading: false })
+        //         })
+        //         .catch(err => {
+        //             console.log(err)
+        //             Alert.alert(
+        //                 'Connection error',
+        //                 'Please check your internet connection',
+        //                 [
+        //                     { text: 'Go Back', onPress: () => this.props.navigation.goBack() },
+        //                 ],
+        //                 { cancelable: true }
+        //             );
+        //         })
+        // ).catch(err => {
+        //     Alert.alert(
+        //         'Request timeout',
+        //         'Please check your internet connection',
+        //         [
+        //             { text: 'Go Back', onPress: () => this.props.navigation.goBack() },
+        //         ],
+        //         { cancelable: true }
+        //     );
+        // })
     }
 
     _renderItem = ({ item, index }) => {

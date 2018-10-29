@@ -17,6 +17,8 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import { URI } from '../../utils/config';
 import { fetchTimeout } from '../../utils/fetchTimeout';
 const apple = require('../../assets/img/apple1.jpg')
+const axios = require('axios');
+var moment = require('moment');
 class Submit extends Component {
     constructor(props) {
         super(props);
@@ -31,7 +33,7 @@ class Submit extends Component {
         let packedShipment = {
             "$class": "com.vsii.blockchain.vitracing.ShipmentPacked",
             "productName": packageDetail.productName,
-            "notesFarmer": userInfo.username + ": " + packageDetail.descr,
+            "notesFarmer": moment().format('HH:mm') + ' - ' + userInfo.username + ": " + packageDetail.descr,
             "quantity": packageDetail.quantity,
             "qrCode": packageDetail.qrCode,
             "farmerId": userInfo.id,
@@ -39,42 +41,64 @@ class Submit extends Component {
         }
 
         this.setState({ visible: true }, () => {
-            fetchTimeout(10000,
-                fetch(URI + '/ShipmentPacked', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Accept: 'application/json',
-                    },
-                    body: JSON.stringify(packedShipment)
-                })
-                    .then(res => res.json())
-                    .then(resJson => {
-                        console.log(resJson);
-                        this.setState({ visible: false, submitted: true });
-                        this.props.navigation.navigate('SubmitResult');
-                    })
-                    .catch(err => {
-                        console.log(err)
-                        Alert.alert(
-                            'Submit Failed',
-                            'Connection error',
-                            [
-                                { text: 'Try Again', onPress: () => this.setState({ visible: false }) },
-                            ],
-                            { cancelable: true }
-                        );
-                    })
-            ).catch(err => {
-                Alert.alert(
-                    'Submit Failed',
-                    'Request timeout',
-                    [
-                        { text: 'Try Again', onPress: () => this.setState({ visible: false }) },
-                    ],
-                    { cancelable: true }
-                );
+            axios({
+                method: 'post',
+                url: URI + '/ShipmentPacked',
+                data: packedShipment,
+                timeout: 10000
             })
+                .then(res => {
+                    this.setState({ visible: false, submitted: true });
+                    this.props.navigation.navigate('SubmitResult');
+                })
+                .catch(err => {
+                    console.log(err)
+                    Alert.alert(
+                        'Submit Failed',
+                        'Connection error',
+                        [
+                            { text: 'Try Again', onPress: () => this.setState({ visible: false }) },
+                        ],
+                        { cancelable: true }
+                    );
+                })
+
+            // fetchTimeout(10000,
+            //     fetch(URI + '/ShipmentPacked', {
+            //         method: 'POST',
+            //         headers: {
+            //             'Content-Type': 'application/json',
+            //             Accept: 'application/json',
+            //         },
+            //         body: JSON.stringify(packedShipment)
+            //     })
+            //         .then(res => res.json())
+            //         .then(resJson => {
+            //             console.log(resJson);
+            //             this.setState({ visible: false, submitted: true });
+            //             this.props.navigation.navigate('SubmitResult');
+            //         })
+            //         .catch(err => {
+            //             console.log(err)
+            //             Alert.alert(
+            //                 'Submit Failed',
+            //                 'Connection error',
+            //                 [
+            //                     { text: 'Try Again', onPress: () => this.setState({ visible: false }) },
+            //                 ],
+            //                 { cancelable: true }
+            //             );
+            //         })
+            // ).catch(err => {
+            //     Alert.alert(
+            //         'Submit Failed',
+            //         'Request timeout',
+            //         [
+            //             { text: 'Try Again', onPress: () => this.setState({ visible: false }) },
+            //         ],
+            //         { cancelable: true }
+            //     );
+            // })
         })
     }
 

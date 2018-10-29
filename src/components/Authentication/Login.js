@@ -8,6 +8,7 @@ import { getUserInfo } from '../../redux/actionCreator';
 import { fetchTimeout } from '../../utils/fetchTimeout';
 var md5 = require('md5');
 import { URI1 } from '../../utils/config';
+const axios = require('axios');
 
 class Login extends Component {
     constructor(props) {
@@ -59,24 +60,20 @@ class Login extends Component {
             alert('Missing username or password')
         } else {
             this.setState({ visible: true }, () => {
-                fetchTimeout(10000,
-                    fetch(URI1 + '/userlogin/', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(userAccount)
+                axios({
+                    method: 'post',
+                    url: URI1 + '/userlogin/',
+                    data: userAccount,
+                    timeout: 10000
+                })
+                    .then(res => {
+                        this.setState({ visible: false });
+                        this.props.getUserInfo(res.data);
+                        this.props.navigation.navigate('Home');
                     })
-                        .then((res) => {
-                            return res.json();
-                        })
-                        .then(resJson => {
-                            this.setState({ visible: false });
-                            this.props.getUserInfo(resJson);
-                            this.props.navigation.navigate('Home');
-                        })
-                        .catch(err => {
-                            console.log(err);
+                    .catch((err) => {
+                        console.log(err);
+                        if (err.response) {
                             Alert.alert(
                                 'Login Failed',
                                 'Incorrect username or password',
@@ -85,19 +82,66 @@ class Login extends Component {
                                 ],
                                 { cancelable: false }
                             );
-                        })
-                )
-                    .catch(err => {
-                        console.log(err);
-                        Alert.alert(
-                            'Login Failed',
-                            'Request timeout',
-                            [
-                                { text: 'Try Again', onPress: () => this.setState({ visible: false }) },
-                            ],
-                            { cancelable: true }
-                        );
+                        } else if (err.request) {
+                            Alert.alert(
+                                'Login Failed',
+                                'Check your connection',
+                                [
+                                    { text: 'Try Again', onPress: () => this.setState({ visible: false }) },
+                                ],
+                                { cancelable: false }
+                            );
+                        }  else
+                        if (err.message.indexOf("timeout")){
+                            Alert.alert(
+                                'Login Failed',
+                                'Request timeout',
+                                [
+                                    { text: 'Try Again', onPress: () => this.setState({ visible: false }) },
+                                ],
+                                { cancelable: false }
+                            );
+                        }
                     })
+                // fetchTimeout(10000,
+                //     fetch(URI1 + '/userlogin/', {
+                //         method: 'POST',
+                //         headers: {
+                //             'Content-Type': 'application/json',
+                //         },
+                //         body: JSON.stringify(userAccount)
+                //     })
+                //         .then((res) => {
+                //             return res.json();
+                //         })
+                //         .then(resJson => {
+                //             this.setState({ visible: false });
+                //             this.props.getUserInfo(resJson);
+                //             this.props.navigation.navigate('Home');
+                //         })
+                //         .catch(err => {
+                //             console.log(err);
+                //             Alert.alert(
+                //                 'Login Failed',
+                //                 'Incorrect username or password',
+                //                 [
+                //                     { text: 'Try Again', onPress: () => this.setState({ visible: false }) },
+                //                 ],
+                //                 { cancelable: false }
+                //             );
+                //         })
+                // )
+                //     .catch(err => {
+                //         console.log(err);
+                //         Alert.alert(
+                //             'Login Failed',
+                //             'Request timeout',
+                //             [
+                //                 { text: 'Try Again', onPress: () => this.setState({ visible: false }) },
+                //             ],
+                //             { cancelable: true }
+                //         );
+                //     })
             })
         }
     }

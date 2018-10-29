@@ -5,9 +5,9 @@ import { Button, Icon, Text } from 'native-base';
 import { getShipment } from '../../redux/actionCreator';
 import { connect } from 'react-redux';
 import { URI } from '../../utils/config';
-import { fetchTimeout } from '../../utils/fetchTimeout';
-
 import Header from '../Header';
+
+const axios = require('axios');
 const logo = require('../../assets/img/logo2.png')
 const deviceHeight = Dimensions.get("window").height;
 const deviceWidth = Dimensions.get("window").width;
@@ -35,30 +35,25 @@ class ScanShipper extends Component {
         this.setState({ qrcode: e.data });
         Vibration.vibrate();
         this.setState({ scanning: false });
-        fetchTimeout(20000,
-            fetch(URI + '/Shipment/' + e.data, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
+
+        axios({
+            method: 'get',
+            url: URI + '/Shipment/' + e.data,
+            timeout: 10000
+        })
+            .then(res => {
+                if (res.data.verifiedDateTime) {
+                    this.props.getShipment(res.data);
+                    this.props.navigation.navigate('FormShipper');
+                } else {
+                    alert('The Shipment has not been verified yet');
+                    this.props.navigation.navigate('Home');
                 }
             })
-                .then(res => res.json())
-                .then(resJson => {
-                    if (resJson.error) {
-                        this.props.navigation.navigate('ScanResult', { result: 'denied' });
-                        return Promise.reject(new Error('Fail!'));
-                    } else {
-                        if (resJson.verifiedDateTime) {
-                            this.props.getShipment(resJson);
-                            this.props.navigation.navigate('FormShipper');
-                        } else {
-                            alert('The Shipment has not been verified yet');
-                            this.props.navigation.navigate('Home');
-                        }
-                    }
-                })
-                .catch(err => {
-                    console.log(err)
+            .catch(err => {
+                if (err.response) {
+                    this.props.navigation.navigate('ScanResult', { result: 'denied' });
+                } else if (err.request) {
                     Alert.alert(
                         'Connection Error',
                         'Please check your internet connection',
@@ -67,17 +62,52 @@ class ScanShipper extends Component {
                         ],
                         { cancelable: true }
                     );
-                })
-        ).catch(err => {
-            Alert.alert(
-                'Request timeout',
-                'Please check your internet connection',
-                [
-                    { text: 'Try again', onPress: () => this.setState({ scanning: true }) },
-                ],
-                { cancelable: true }
-            );
-        })
+                }
+            })
+
+        // fetchTimeout(20000,
+        //     fetch(URI + '/Shipment/' + e.data, {
+        //         method: 'GET',
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //         }
+        //     })
+        //         .then(res => res.json())
+        //         .then(resJson => {
+        //             if (resJson.error) {
+        //                 this.props.navigation.navigate('ScanResult', { result: 'denied' });
+        //                 return Promise.reject(new Error('Fail!'));
+        //             } else {
+        //                 if (resJson.verifiedDateTime) {
+        //                     this.props.getShipment(resJson);
+        //                     this.props.navigation.navigate('FormShipper');
+        //                 } else {
+        //                     alert('The Shipment has not been verified yet');
+        //                     this.props.navigation.navigate('Home');
+        //                 }
+        //             }
+        //         })
+        //         .catch(err => {
+        //             console.log(err)
+        //             Alert.alert(
+        //                 'Connection Error',
+        //                 'Please check your internet connection',
+        //                 [
+        //                     { text: 'Try again', onPress: () => this.setState({ scanning: true }) },
+        //                 ],
+        //                 { cancelable: true }
+        //             );
+        //         })
+        // ).catch(err => {
+        //     Alert.alert(
+        //         'Request timeout',
+        //         'Please check your internet connection',
+        //         [
+        //             { text: 'Try again', onPress: () => this.setState({ scanning: true }) },
+        //         ],
+        //         { cancelable: true }
+        //     );
+        // })
     }
 
     render() {

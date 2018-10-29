@@ -27,6 +27,7 @@ var moment = require('moment');
 import { URI } from '../../utils/config';
 import { fetchTimeout } from '../../utils/fetchTimeout';
 const logo = require('../../assets/img/logo2.png')
+const axios = require('axios');
 class VerifyForm extends Component {
     constructor(props) {
         super(props);
@@ -89,49 +90,70 @@ class VerifyForm extends Component {
         } else {
             let noteVerifier = userInfo.username + ": " + this.state.note;
             let verifierNamespace = "resource:com.vsii.blockchain.vitracing.Verifier#"
-            let newVerifier =  verifierNamespace + userInfo.id;
+            let newVerifier = verifierNamespace + userInfo.id;
             let verifierArray = [];
             if (shipment.verifier) {
-                verifierArray = shipment.verifier.map(verifier => { return verifierNamespace + verifier.personId})
-            }  
+                verifierArray = shipment.verifier.map(verifier => { return verifierNamespace + verifier.personId })
+            }
             verifierArray.push(newVerifier);
             let verifiedShipment = {
                 "$class": "com.vsii.blockchain.vitracing.ShipmentVerified",
                 "status": status ? "VERIFIED" : "REJECTED",
-                "notesVerifier": shipment.notesVerifier ? shipment.notesVerifier + "_" + noteVerifier : noteVerifier,
+                "notesVerifier": shipment.notesVerifier ? shipment.notesVerifier + "_" + moment().format('HH:mm') + ' - ' + noteVerifier : moment().format('HH:mm') + ' - ' + noteVerifier,
                 "expiredDateTime": shipment.expiredDateTime ? shipment.expiredDateTime : this.state.expiredDate,
                 "shipment": "resource:com.vsii.blockchain.vitracing.Shipment#" + shipment.qrCode,
                 "verifier": verifierArray
             }
             this.setState({ visible: true }, () => {
-                
-                fetchTimeout(10000,
-                    fetch(URI + '/ShipmentVerified', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            Accept: 'application/json',
-                        },
-                        body: JSON.stringify(verifiedShipment)
-                    })
-                        .then(res => res.json())
-                        .then(resJson => {
-                            console.log(resJson);
-                            this.setState({ visible: false });
-                            this.props.navigation.navigate('SubmitResult');
-                            
-                        })
-                        .catch(err => console.log(err))
-                ).catch(err => {
-                    Alert.alert(
-                        'Submit Failed',
-                        'Request timeout',
-                        [
-                            { text: 'Try Again', onPress: () => this.setState({ visible: false }) },
-                        ],
-                        { cancelable: false }
-                    );
+                axios({
+                    method: 'post',
+                    url: URI + '/ShipmentVerified',
+                    data: verifiedShipment,
+                    timeout: 10000
                 })
+                    .then(res => {
+                        console.log(res);
+                        this.setState({ visible: false });
+                        this.props.navigation.navigate('SubmitResult');
+                    })
+                    .catch(err => {
+                        Alert.alert(
+                            'Submit Failed',
+                            'Request timeout',
+                            [
+                                { text: 'Try Again', onPress: () => this.setState({ visible: false }) },
+                            ],
+                            { cancelable: false }
+                        );
+                    })
+
+                // fetchTimeout(10000,
+                //     fetch(URI + '/ShipmentVerified', {
+                //         method: 'POST',
+                //         headers: {
+                //             'Content-Type': 'application/json',
+                //             Accept: 'application/json',
+                //         },
+                //         body: JSON.stringify(verifiedShipment)
+                //     })
+                //         .then(res => res.json())
+                //         .then(resJson => {
+                //             console.log(resJson);
+                //             this.setState({ visible: false });
+                //             this.props.navigation.navigate('SubmitResult');
+
+                //         })
+                //         .catch(err => console.log(err))
+                // ).catch(err => {
+                //     Alert.alert(
+                //         'Submit Failed',
+                //         'Request timeout',
+                //         [
+                //             { text: 'Try Again', onPress: () => this.setState({ visible: false }) },
+                //         ],
+                //         { cancelable: false }
+                //     );
+                // })
             })
         }
     }

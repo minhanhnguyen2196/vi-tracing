@@ -2,11 +2,12 @@ import React, { Component } from 'react';
 import { View, Alert, Image, BackHandler, TextInput, KeyboardAvoidingView, StyleSheet } from 'react-native';
 import { Container, Content, Button, Icon, Item, Label, Left, Right, Body, Input, Text, Radio, ListItem, Form } from 'native-base';
 import { URI } from '../../utils/config';
-import { fetchTimeout } from '../../utils/fetchTimeout';
+
 import { connect } from 'react-redux';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Header from '../Header';
 var moment = require('moment');
+const axios = require('axios')
 
 const logo = require('../../assets/img/logo2.png')
 class VerifyFormMarket extends Component {
@@ -36,57 +37,79 @@ class VerifyFormMarket extends Component {
         } else {
             let noteRetailer = userInfo.username + ": " + this.state.note;
             let retailerNamespace = "resource:com.vsii.blockchain.vitracing.Retailer#"
-            let newRetailer =  retailerNamespace + userInfo.id;
+            let newRetailer = retailerNamespace + userInfo.id;
             let retailerArray = [];
             if (shipment.retailer) {
-                retailerArray = shipment.retailer.map(retailer => { return retailerNamespace + retailer.personId})
-            }  
+                retailerArray = shipment.retailer.map(retailer => { return retailerNamespace + retailer.personId })
+            }
             retailerArray.push(newRetailer);
 
             let receivedShipment = {
                 "$class": "com.vsii.blockchain.vitracing.ShipmentReceived",
                 "status": status ? "RECEIVED" : "REJECTED",
-                "notesRetailer": shipment.notesRetailer ? shipment.notesRetailer + "_" + noteRetailer : noteRetailer,
+                "notesRetailer": shipment.notesRetailer ? shipment.notesRetailer + "_" + moment().format('HH:mm') + ' - ' + noteRetailer : moment().format('HH:mm') + ' - ' + noteRetailer,
                 "shipment": "resource:com.vsii.blockchain.vitracing.Shipment#" + shipment.qrCode,
                 "retailer": retailerArray
             }
             this.setState({ visible: true }, () => {
-                fetchTimeout(10000, 
-                    fetch(URI + '/ShipmentReceived', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            Accept: 'application/json',
-                        },
-                        body: JSON.stringify(receivedShipment)
+                axios({
+                    method: 'post',
+                    url: URI + '/ShipmentReceived',
+                    timeout: 10000,
+                    data: receivedShipment
+                })
+                    .then(res => {
+                        this.setState({ visible: false, submitted: true })
+                        this.props.navigation.navigate('SubmitResult');
                     })
-                        .then(res => res.json())
-                        .then(resJson => {
-                            console.log(resJson);
-                            this.setState({ visible: false, submitted: true })
-                            this.props.navigation.navigate('SubmitResult');
-                        })
-                        .catch(err => {
-                            console.log(err);
-                            Alert.alert(
-                                'Submit Failed',
-                                'Connection Error',
-                                [
-                                    { text: 'Try Again', onPress: () => this.setState({ visible: false }) },
-                                ],
-                                { cancelable: true }
-                            );
-                        })
-                ).catch(err => {
-                    Alert.alert(
-                        'Submit Failed',
-                        'Request timeout',
-                        [
-                            { text: 'Try Again', onPress: () => this.setState({ visible: false }) },
-                        ],
-                        { cancelable: true }
-                    );
-                }) 
+                    .catch(err => {
+                        console.log(err);
+                        Alert.alert(
+                            'Submit Failed',
+                            'Connection Error',
+                            [
+                                { text: 'Try Again', onPress: () => this.setState({ visible: false }) },
+                            ],
+                            { cancelable: true }
+                        );
+                    })
+
+                // fetchTimeout(10000,
+                //     fetch(URI + '/ShipmentReceived', {
+                //         method: 'POST',
+                //         headers: {
+                //             'Content-Type': 'application/json',
+                //             Accept: 'application/json',
+                //         },
+                //         body: JSON.stringify(receivedShipment)
+                //     })
+                //         .then(res => res.json())
+                //         .then(resJson => {
+                //             console.log(resJson);
+                //             this.setState({ visible: false, submitted: true })
+                //             this.props.navigation.navigate('SubmitResult');
+                //         })
+                //         .catch(err => {
+                //             console.log(err);
+                //             Alert.alert(
+                //                 'Submit Failed',
+                //                 'Connection Error',
+                //                 [
+                //                     { text: 'Try Again', onPress: () => this.setState({ visible: false }) },
+                //                 ],
+                //                 { cancelable: true }
+                //             );
+                //         })
+                // ).catch(err => {
+                //     Alert.alert(
+                //         'Submit Failed',
+                //         'Request timeout',
+                //         [
+                //             { text: 'Try Again', onPress: () => this.setState({ visible: false }) },
+                //         ],
+                //         { cancelable: true }
+                //     );
+                // })
             })
         }
     }

@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { URI } from '../../utils/config';
 import { fetchTimeout } from '../../utils/fetchTimeout';
 import Header from '../Header';
-
+const axios = require('axios');
 const deviceHeight = Dimensions.get("window").height;
 const deviceWidth = Dimensions.get("window").width;
 const logo = require('../../assets/img/logo2.png')
@@ -41,43 +41,68 @@ class VerifyScan extends Component {
             encodeURIComponent(data[key])).join('&');
         const fullUrl = url + `${params ? '?' + params : ''}`;
 
-        fetchTimeout(20000,
-            fetch(fullUrl, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
+        axios({
+            method: 'get',
+            url: fullUrl,
+            timeout: 10000
+        })
+            .then(res => {
+                this.props.getShipment(res.data);
+                this.props.navigation.navigate('PackageDetailForVerifier');
             })
-                .then(res => res.json())
-                .then(resJson => {
-                    if (resJson.error) {
-                        this.props.navigation.navigate('ScanResult', { result: 'denied' });
-                    } else {
-                        this.props.getShipment(resJson);
-                        this.props.navigation.navigate('PackageDetailForVerifier');
-                    }
-                })
-                .catch(err => {
-                    console.log(err)
+            .catch(err => {
+                if (err.response) {
+                    this.props.navigation.navigate('ScanResult', { result: 'denied' });
+                } else if (err.request) {
                     Alert.alert(
                         'Connection error',
                         'Please check your internet connection',
                         [
                             { text: 'Try again', onPress: () => this.setState({ scanning: true }) },
                         ],
-                        { cancelable: true }
+                        { cancelable: false }
                     );
-                })
-        ).catch(err => {
-            Alert.alert(
-                'Request timeout',
-                'Please check your internet connection',
-                [
-                    { text: 'Try again', onPress: () => this.setState({ scanning: true }) },
-                ],
-                { cancelable: true }
-            );
-        })
+                }
+            })
+
+
+        // fetchTimeout(20000,
+        //     fetch(fullUrl, {
+        //         method: 'GET',
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //         }
+        //     })
+        //         .then(res => res.json())
+        //         .then(resJson => {
+        //             if (resJson.error) {
+        //                 this.props.navigation.navigate('ScanResult', { result: 'denied' });
+        //             } else {
+        //                 this.props.getShipment(resJson);
+        //                 this.props.navigation.navigate('PackageDetailForVerifier');
+        //             }
+        //         })
+        //         .catch(err => {
+        //             console.log(err)
+        //             Alert.alert(
+        //                 'Connection error',
+        //                 'Please check your internet connection',
+        //                 [
+        //                     { text: 'Try again', onPress: () => this.setState({ scanning: true }) },
+        //                 ],
+        //                 { cancelable: true }
+        //             );
+        //         })
+        // ).catch(err => {
+        //     Alert.alert(
+        //         'Request timeout',
+        //         'Please check your internet connection',
+        //         [
+        //             { text: 'Try again', onPress: () => this.setState({ scanning: true }) },
+        //         ],
+        //         { cancelable: true }
+        //     );
+        // })
     }
 
 
